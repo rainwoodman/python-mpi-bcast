@@ -184,6 +184,7 @@ PyMPI_Main(int argc, char **argv)
 #else
   sts = Py_Main(argc, argv);
 #endif
+  if (sts != 0) (void)MPI_Abort(MPI_COMM_WORLD, sts);
 
   /* MPI finalization */
   (void)MPI_Finalized(&flag);
