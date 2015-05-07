@@ -14,6 +14,9 @@ PYTHONCONFIG=python-config
 # remember use python-mpi.py -I openmpi
 # to workaround symbol table issues.
 
+# on Edison
+# LIBRARY_PATH=$LD_LIBRARY_PATH make CC=cc 
+
 .PHONY: build clean
 
 build: 
