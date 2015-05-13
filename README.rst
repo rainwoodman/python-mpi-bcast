@@ -20,11 +20,11 @@ All of these steps are required to get a consistent, fast python start-up time.
 1. Redirect PYTHONUSERBASE to a fast file system; e.g. 
    the scratch or project file systems. 
 
-For example add this line to your profile script on Edison:
+   For example add this line to your profile script on Edison:
 
-.. code:: bash
+   .. code:: bash
 
-    export PYTHONUSERBASE=$SCRATCH/python-local
+        export PYTHONUSERBASE=$SCRATCH/python-local
 
 This does mean all packages installed with '--user' need to be reinstalled.
 Also scratch is usually purged every now and then. Use a unpurged project directory
@@ -34,50 +34,51 @@ if possible.
    HOME filesystem; redirect them as well. This will speed up the start-up of all
    dynamic executables.
 
-3. Tar the system packages in to a .tar.gz file. 
+3. Prepackage the packages to .tar.gz files
    Quite a lot of meta requests are made just for loading
-   these system-wide packages. We can eliminate these requests with :code:`python-mpi -bcast`
+   these system-wide packages. We can eliminate these requests with :code:`python-mpi`
 
-To do so, we pack the packages into a giant tar ball. For example on Edison
-(the exclude is to skip obviously useless large files)
+   Here is an example of how to use the broadcast feature of python-mpi
 
-.. code:: bash
+   .. code:: bash
+
+       export PYTHON_MPI_CHROOT=/dev/shm
+       export PYTHON_MPI_PKGROOT=/project/projectdirs/m779/python-mpi/usg
+       export PYTHON_MPI_PACKAGES=matplotlib-1.4.3.tar.gz:mpi4py-1.3.1.tar.gz:numpy-1.9.2.tar.gz:python-2.7.9.tar.gz:scipy-0.15.1.tar.gz
+
+   python-mpi will reset :code:`PYTHONHOME` and :code:`PYTHONBASE` to subdirectories of :code:`PYTHON_MPI_CHROOT`.
+
+   The tar.gz files must be packed at :code:`PYTHON_MPI_PKGROOT`. Here is an example:
+
+   .. code:: bash
+        
+        cd $PYTHON_MPI_PKGROOT 
+        easy_install --prefix=$TMPDIR/mypackage
+        tar --exclude=*.png --exclude=*.jpg --exclude=*.html 
+            --exclude=*.pyo --exclude=*.pyc  \
+            -C $TMPDIR/mypackage
+            -czvf mypackage-version.tar.gz
+
     
-    cd /scratch2/usg-python/
-
-    tar --exclude=*.png --exclude=*.jpg --exclude=*.html 
-        --exclude=*.pyo --exclude=*.pyc  \
-        -czvf $SCRATCH/usg-python-2.7.9.tar.gz \
-        ipython        mysqlpython    \
-        numpy          pysqlite       \
-        2.7.9          cython         \
-        matplotlib     netcdf4-python \
-        pil            pytables       \
-        scipy h5py                    \
-        mpi4py         numexpr    \
-        pympi          pyyaml       
-
 4. Speed up in source packages by making sure not running the scripts from HOME.
 
 5. Set up the run. Here is an example on Edison 
 
-.. code:: bash
+   .. code:: bash
 
-    # packages will be unzipped to this location by python-mpi
-    export PYTHON_MPI_HOME=/dev/shm 
+        # python-mpi -bcast will create this directory from the prepackaged file
+        export PYTHONHOME=/dev/shm/2.7.9
 
-    # python-mpi -bcast will create this directory from the prepackaged file
-    export PYTHONHOME=/dev/shm/2.7.9
+        # use the user packages on scratch
+        export PYTHONUSERBASE=$SCRATCH/python-local
 
-    # replace /scratch2/use-python/ to the new location.
-    export PYTHONPATH=`echo $PYTHONPATH|sed -e 's;/scratch2/usg-python/;/dev/shm/;g'`
+        export PYTHON_MPI_CHROOT=/dev/shm
+        export PYTHON_MPI_PKGROOT=/project/projectdirs/m779/python-mpi/usg
+        export PYTHON_MPI_PACKAGES=matplotlib-1.4.3.tar.gz:mpi4py-1.3.1.tar.gz:numpy-1.9.2.tar.gz:python-2.7.9.tar.gz:scipy-0.15.1.tar.gz
 
-    # use the user packages on scratch
-    export PYTHONUSERBASE=$SCRATCH/python-local
+        # start the scripts from a fast file-system
+        cd $SCRATCH/my_codedir
 
-    # start the scripts from a fast file-system
-    cd $SCRATCH/my_codedir
-
-    aprun -n 256 \
-        ./python-mpi -bcast $SCRATCH/usg-python-2.7.9.tar.gz \
-            your regular script
+        aprun -n 256 \
+            ./python-mpi
+                your regular script
