@@ -64,22 +64,48 @@ char ** list_packages(int * npackages) {
     PACKAGES[i] = NULL;
     return PACKAGES;
 }
-static int bcast_packages(char ** PACKAGES, int NPACKAGES) {
-    int i;
+static int getnid() {
     char hostname[1024];
+    int i;
     gethostname(hostname, 1024);
 
+    int l = strlen(hostname) + 1;
+    int ml = 0;
+    int NTask;
+    char * buffer;
+    int * nid;
+    MPI_Comm_size(MPI_COMM_WORLD, &NTask);
+    MPI_Allreduce(&l, &ml, 1, MPI_INT, MPI_MAX, MPI_COMM_WORLD);
+    
+    buffer = malloc(ml * NTask);
+    nid = malloc(sizeof(int) * NTask);
+    MPI_Allgather(hostname, ml, MPI_BYTE, buffer, ml, MPI_BYTE, MPI_COMM_WORLD);
+
+    qsort(buffer, NTask, ml, strcmp);
+    
     /* hack on Crays; this would translate the host name to
      * a pure number format. 
      * we really should find a different way to find all ranks
      * on the same node.
      */
-    for(i = 0; i < strlen(hostname); i ++) {
-        if(hostname[i] < '0' || hostname[i] > '9') {
-            hostname[i] = '0';
+    nid[0] = 0;
+    for(i = 1; i < NTask; i ++) {
+        if(strcmp(buffer + i * ml, buffer + (i - 1) *ml)) {
+            nid[i] = nid[i - 1] + 1;
         }
     }
-    int nid = atoi(hostname);
+    for(i = 0; i < NTask; i ++) {
+        if(!strcmp(hostname, buffer + i * ml)) {
+            break;
+        }
+    }
+    free(buffer);
+    free(nid);
+    return nid[i];
+}
+static int bcast_packages(char ** PACKAGES, int NPACKAGES) {
+    int i;
+    int nid = getnid();
 
     int ThisTask = 0;
     int NodeRank = -1;
@@ -191,7 +217,7 @@ PyMPI_Main(int argc, char **argv)
   }
 
   char * PYTHON_MPI_VERBOSE = getenv("PYTHON_MPI_VERBOSE");
-  if(PYTHON_MPI_VERBOSE) {
+  if(PYTHON_MPI_VERBOSE || atoi(PYTHON_MPI_VERBOSE)) {
     VERBOSE = 1;
   }
   int npackages;
