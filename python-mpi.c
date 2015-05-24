@@ -233,7 +233,7 @@ PyMPI_Main(int argc, char **argv)
 
   /* completely ignore PYTHONPATH for now */
   char * PYTHON_MPI_CHROOT = getenv("PYTHON_MPI_CHROOT");
-  setenv("PYTHONUSERHOME", PYTHON_MPI_CHROOT, 1);
+  setenv("PYTHONUSERBASE", PYTHON_MPI_CHROOT, 1);
   setenv("PYTHONHOME", PYTHON_MPI_CHROOT, 1);
   char * buf = malloc(strlen(PYTHON_MPI_CHROOT) + 100);
   sprintf(buf, "%s/lib/python", PYTHON_MPI_CHROOT);
