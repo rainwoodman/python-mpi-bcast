@@ -22,7 +22,7 @@ static int PyMPI_Main(int, char **);
 #if PY_MAJOR_VERSION >= 3
 static int Py3_Main(int, char **);
 #endif
-
+static int VERBOSE = 0;
 /* -------------------------------------------------------------------------- */
 
 int
@@ -111,12 +111,15 @@ static int bcast_packages(char ** PACKAGES, int NPACKAGES) {
                 fprintf(stderr, "PYTHON_MPI_CHROOT must be set to a writable location, for example /dev/shm/\n");
                 MPI_Abort(MPI_COMM_WORLD, 1);
             }
-            printf("%d Packages\n", NPACKAGES);
-            printf("PYTHON_MPI_CHROOT:%s\n", PYTHON_MPI_CHROOT);
-            printf("PYTHON_MPI_PKGROOT:%s\n", PYTHON_MPI_PKGROOT);
+            if(VERBOSE) {
+                printf("%d Packages\n", NPACKAGES);
+                printf("PYTHON_MPI_CHROOT:%s\n", PYTHON_MPI_CHROOT);
+                printf("PYTHON_MPI_PKGROOT:%s\n", PYTHON_MPI_PKGROOT);
+            }
         }
 
-        printf("node nid:%d\n", nid);
+        if(VERBOSE)
+            printf("node nid:%d\n", nid);
 
         for(i = 0; PACKAGES[i] != NULL; i ++) {
             long fsize;
@@ -141,7 +144,8 @@ static int bcast_packages(char ** PACKAGES, int NPACKAGES) {
                 fclose(fp);
                 MPI_Bcast(&fsize, 1, MPI_LONG, 0, NODE_LEADERS);
                 MPI_Bcast(fcontent, fsize, MPI_BYTE, 0, NODE_LEADERS);
-                printf("operating %s: %ld bytes\n", PACKAGES[i], fsize);
+                if(VERBOSE)
+                    printf("operating %s: %ld bytes\n", PACKAGES[i], fsize);
             } else {
                 MPI_Bcast(&fsize, 1, MPI_LONG, 0, NODE_LEADERS);
                 fcontent = malloc(fsize + 1);
@@ -164,7 +168,8 @@ static int bcast_packages(char ** PACKAGES, int NPACKAGES) {
     }
     MPI_Barrier(MPI_COMM_WORLD);
     if(ThisTask == 0) {
-        printf("Python packages delivered\n");
+        if(VERBOSE)
+            printf("Python packages delivered. Launching python interpreter.\n");
     }
 }
 static int
@@ -185,12 +190,17 @@ PyMPI_Main(int argc, char **argv)
     finalize = 1;
   }
 
+  char * PYTHON_MPI_VERBOSE = getenv("PYTHON_MPI_VERBOSE");
+  if(PYTHON_MPI_VERBOSE) {
+    VERBOSE = 1;
+  }
   int npackages;
   char ** packages = list_packages(&npackages);
   bcast_packages(packages, npackages);
 
   /* completely ignore PYTHONPATH for now */
   char * PYTHON_MPI_CHROOT = getenv("PYTHON_MPI_CHROOT");
+  setenv("PYTHONUSERHOME", PYTHON_MPI_CHROOT, 1);
   setenv("PYTHONHOME", PYTHON_MPI_CHROOT, 1);
   char * buf = malloc(strlen(PYTHON_MPI_CHROOT) + 100);
   sprintf(buf, "%s/lib/python", PYTHON_MPI_CHROOT);
