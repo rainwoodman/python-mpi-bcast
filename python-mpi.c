@@ -110,7 +110,7 @@ static int getnid() {
     MPI_Barrier(MPI_COMM_WORLD);
     return nid[i];
 }
-static int bcast_packages(char ** PACKAGES, int NPACKAGES) {
+static int bcast_packages(char ** PACKAGES, int NPACKAGES, char * chroot, char * pkgdir) {
     int i;
     int nid = getnid();
 
@@ -133,21 +133,11 @@ static int bcast_packages(char ** PACKAGES, int NPACKAGES) {
     /* now bcast packages to PYTHON_MPI_CHROOT */
 
     if(NodeRank == 0) {
-        char * PYTHON_MPI_CHROOT = getenv("PYTHON_MPI_CHROOT");
-        char * PYTHON_MPI_PKGROOT= getenv("PYTHON_MPI_PKGROOT");
         if(ThisTask == 0) {
-            if(PYTHON_MPI_PKGROOT == NULL) {
-                fprintf(stderr, "PYTHON_MPI_PKGROOT must be set to a location to look for .tar.gz files.\n");
-                MPI_Abort(MPI_COMM_WORLD, 1);
-            }
-            if (PYTHON_MPI_CHROOT == NULL) {
-                fprintf(stderr, "PYTHON_MPI_CHROOT must be set to a writable location, for example /dev/shm/\n");
-                MPI_Abort(MPI_COMM_WORLD, 1);
-            }
             if(VERBOSE) {
                 printf("%d Packages\n", NPACKAGES);
-                printf("PYTHON_MPI_CHROOT:%s\n", PYTHON_MPI_CHROOT);
-                printf("PYTHON_MPI_PKGROOT:%s\n", PYTHON_MPI_PKGROOT);
+                printf("tmpdir:%s\n", chroot);
+                printf("PYTHON_MPI_PKGROOT:%s\n", pkgdir);
             }
         }
 
@@ -157,10 +147,10 @@ static int bcast_packages(char ** PACKAGES, int NPACKAGES) {
         for(i = 0; PACKAGES[i] != NULL; i ++) {
             long fsize;
             char *fcontent;
-            char * dest = alloca(strlen(PYTHON_MPI_CHROOT) + 100);
-            char * src = alloca(strlen(PYTHON_MPI_PKGROOT) + 100);
-            sprintf(dest, "%s/_thispackage.tar.gz",  PYTHON_MPI_CHROOT, ThisTask);
-            sprintf(src, "%s/%s",  PYTHON_MPI_PKGROOT, PACKAGES[i]);
+            char * dest = alloca(strlen(chroot) + 100);
+            char * src = alloca(strlen(pkgdir) + 100);
+            sprintf(dest, "%s/_thispackage.tar.gz",  chroot, ThisTask);
+            sprintf(src, "%s/%s",  pkgdir, PACKAGES[i]);
 
             if(ThisTask == 0) {
                 FILE * fp = fopen(src, "r");
@@ -191,13 +181,16 @@ static int bcast_packages(char ** PACKAGES, int NPACKAGES) {
             fclose(fp);
             free(fcontent);
             
-            char * untar = alloca(strlen(dest) + strlen(PYTHON_MPI_CHROOT) + 100);
-            sprintf(untar, "tar --overwrite -xzf \"%s\" -C \"%s\"", dest, PYTHON_MPI_CHROOT);
+            char * untar = alloca(strlen(dest) + strlen(chroot) + 100);
+            sprintf(untar, "tar --overwrite -xzf \"%s\" -C \"%s\"", dest, chroot);
             system(untar);
             unlink(dest);
 
             MPI_Barrier(NODE_LEADERS);
         }
+        char * chmod = alloca(strlen(chroot) + 100);
+        sprintf(chmod, "chmod -fR 777 \"%s\"", chroot);
+        system(chmod);
     }
     MPI_Barrier(MPI_COMM_WORLD);
     if(ThisTask == 0) {
@@ -227,16 +220,37 @@ PyMPI_Main(int argc, char **argv)
   if(PYTHON_MPI_VERBOSE && atoi(PYTHON_MPI_VERBOSE)) {
     VERBOSE = 1;
   }
+
+  char * PYTHON_MPI_PKGROOT= getenv("PYTHON_MPI_PKGROOT");
+  if(PYTHON_MPI_PKGROOT == NULL) {
+      fprintf(stderr, "PYTHON_MPI_PKGROOT must be set to a location to look for .tar.gz files.\n");
+      MPI_Abort(MPI_COMM_WORLD, 1);
+  }
+
+  char * PYTHON_MPI_CHROOT = getenv("PYTHON_MPI_CHROOT");
+  if (PYTHON_MPI_CHROOT == NULL) {
+      fprintf(stderr, "PYTHON_MPI_CHROOT must be set to a writable location, for example /dev/shm/\n");
+      MPI_Abort(MPI_COMM_WORLD, 1);
+  }
+
+  char * PYTHON_MPI_CHROOT_TMP = alloca(strlen(PYTHON_MPI_CHROOT) + 100);
+  sprintf(PYTHON_MPI_CHROOT_TMP, "%s/XXXXXX", PYTHON_MPI_CHROOT);
+  int ThisTask;
+  MPI_Comm_rank(MPI_COMM_WORLD, &ThisTask);
+  if(ThisTask == 0) {
+      PYTHON_MPI_CHROOT_TMP = mkdtemp(PYTHON_MPI_CHROOT_TMP);
+  }
+  MPI_Bcast(PYTHON_MPI_CHROOT_TMP, strlen(PYTHON_MPI_CHROOT) + 99, MPI_BYTE, 0, MPI_COMM_WORLD);
+
   int npackages;
   char ** packages = list_packages(&npackages);
-  bcast_packages(packages, npackages);
+  bcast_packages(packages, npackages, PYTHON_MPI_CHROOT_TMP, PYTHON_MPI_PKGROOT);
 
   /* completely ignore PYTHONPATH for now */
-  char * PYTHON_MPI_CHROOT = getenv("PYTHON_MPI_CHROOT");
-  setenv("PYTHONUSERBASE", PYTHON_MPI_CHROOT, 1);
-  setenv("PYTHONHOME", PYTHON_MPI_CHROOT, 1);
-  char * buf = malloc(strlen(PYTHON_MPI_CHROOT) + 100);
-  sprintf(buf, "%s/lib/python", PYTHON_MPI_CHROOT);
+  setenv("PYTHONUSERBASE", PYTHON_MPI_CHROOT_TMP, 1);
+  setenv("PYTHONHOME", PYTHON_MPI_CHROOT_TMP, 1);
+  char * buf = malloc(strlen(PYTHON_MPI_CHROOT_TMP) + 100);
+  sprintf(buf, "%s/lib/python", PYTHON_MPI_CHROOT_TMP);
   setenv("PYTHONPATH", buf, 1);
 
   /* Python main */
@@ -245,6 +259,11 @@ PyMPI_Main(int argc, char **argv)
 #else
   sts = Py_Main(argc, argv);
 #endif
+
+  char * cleanup = alloca(strlen(PYTHON_MPI_CHROOT_TMP) + 100);
+  sprintf(cleanup, "rm -rf \"%s\"", PYTHON_MPI_CHROOT_TMP);
+  system(cleanup);
+
   if (sts != 0) (void)MPI_Abort(MPI_COMM_WORLD, sts);
 
   /* MPI finalization */
