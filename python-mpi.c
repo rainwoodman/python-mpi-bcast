@@ -105,10 +105,11 @@ static int getnid() {
             break;
         }
     }
+    int rt = nid[i];
     free(buffer);
     free(nid);
     MPI_Barrier(MPI_COMM_WORLD);
-    return nid[i];
+    return rt;
 }
 static int bcast_packages(char ** PACKAGES, int NPACKAGES, char * chroot, char * pkgdir) {
     int i;
