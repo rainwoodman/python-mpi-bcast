@@ -97,7 +97,7 @@ static int getnid() {
     }
     if(ThisTask == 0) {
         for(i = 0; i < NTask; i ++) {
-    //        printf("%d :%s:%d\n", i, buffer + i * ml, nid[i]);
+            //printf("%d :%s:%d\n", i, buffer + i * ml, nid[i]);
         }
     }
     for(i = 0; i < NTask; i ++) {
@@ -150,6 +150,7 @@ static int bcast_packages(char ** PACKAGES, int NPACKAGES, char * chroot, char *
             char *fcontent;
             char * dest = alloca(strlen(chroot) + 100);
             char * src = alloca(strlen(pkgdir) + 100);
+            mkdir(chroot, 0777);
             sprintf(dest, "%s/_thispackage.tar.gz",  chroot, ThisTask);
             sprintf(src, "%s/%s",  pkgdir, PACKAGES[i]);
 
@@ -235,12 +236,10 @@ PyMPI_Main(int argc, char **argv)
   }
 
   char * PYTHON_MPI_CHROOT_TMP = alloca(strlen(PYTHON_MPI_CHROOT) + 100);
-  sprintf(PYTHON_MPI_CHROOT_TMP, "%s/XXXXXX", PYTHON_MPI_CHROOT);
-  int ThisTask;
-  MPI_Comm_rank(MPI_COMM_WORLD, &ThisTask);
-  if(ThisTask == 0) {
-      PYTHON_MPI_CHROOT_TMP = mkdtemp(PYTHON_MPI_CHROOT_TMP);
-  }
+  char * USER = getenv("USER");
+  if (USER == NULL) USER = getlogin();
+
+  sprintf(PYTHON_MPI_CHROOT_TMP, "%s/%s", PYTHON_MPI_CHROOT, USER);
   MPI_Bcast(PYTHON_MPI_CHROOT_TMP, strlen(PYTHON_MPI_CHROOT) + 99, MPI_BYTE, 0, MPI_COMM_WORLD);
 
   int npackages;
