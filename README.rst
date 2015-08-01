@@ -84,10 +84,10 @@ either by the computing faciliaties, or by a user.
 
    This does mean all packages installed with '--user' need to be reinstalled.
    
-   .. warnings::
+   .. attention::
    
-      If PYTHONUSERBASE is not reset to a fast location, the start time will still
-      be very slow.
+      **If PYTHONUSERBASE is not reset to a fast location, the start time will still
+      be very slow.**
 
 2. Prepackage the packages to .tar.gz files
 
