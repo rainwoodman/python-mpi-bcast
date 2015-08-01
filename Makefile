@@ -11,8 +11,6 @@ PYTHONCONFIG=python-config
 
 # on Fedora 19 with openmpi
 # make CC=mpicc LDSHARED="mpicc -shared"
-# remember use python-mpi.py -I openmpi
-# to workaround symbol table issues.
 
 # on Edison
 # LIBRARY_PATH=$LD_LIBRARY_PATH make CC=cc 
