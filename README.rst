@@ -1,13 +1,13 @@
 python-mpi-bcast
 ================
 
-HPC friendly python interpreter.
+HPC friendly python interpreter that deploys packages to computing nodes via MPI.
 
-Why is Python slow on a super computer?
+Why is Python slow on a supercomputer?
 ---------------------------------------
 
-One problem with large scale parallel application written in Python is the slow startup time. The Python
-Interpreter may spend half an hour before even start processing any useful user logic.
+One problem with large scale parallel application written in Python is the slow startup time. 
+The Python interpreter may spend half an hour before even start processing any useful user logic.
 
 Python does a lot of file operations upon startup.
 This is not an issue for small scale applications -- but on
