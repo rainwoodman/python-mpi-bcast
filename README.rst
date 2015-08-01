@@ -18,8 +18,6 @@ shared library burden, described in [Hopper-UG]
 For example, on a typical python installation with numpy the number of
 file operations to 
 
-Do nothing but quit:
-
 .. code::
 
    $ strace -ff -e file python -c '' 2>&1 |wc -l
@@ -30,6 +28,8 @@ Do nothing but quit:
 
    $ strace -ff -e file python -c 'import numpy.fft; import scipy.interpolate' 2>&1|wc -l
    8089
+
+Now multiply this number by the number of ranks, 1024, for example.
 
 Keep in mind that in a massively parallel application, the payload may
 in fact only access a few very large files. The overhead here is a
@@ -116,17 +116,18 @@ dynamic executables.
 
 
 Here is a full job script example on Edison:
+
 .. code:: bash
 
-     # python-mpi -bcast will create this directory from the prepackaged file
-     export PYTHONHOME=/dev/shm/2.7.9
-        # use the user packages on scratch
-     export PYTHONUSERBASE=$SCRATCH/python-local
-     export PYTHON_MPI_CHROOT=/dev/shm
-     export PYTHON_MPI_PKGROOT=/project/projectdirs/m779/python-mpi/usg
-     export PYTHON_MPI_PACKAGES=matplotlib-1.4.3.tar.gz:mpi4py-1.3.1.tar.gz:numpy-1.9.2.tar.gz:python-2.7.9.tar.gz:scipy-0.15.1.tar.gz
-     # start the scripts from a fast file-system
-     cd $SCRATCH/my_codedir
+    # python-mpi -bcast will create this directory from the prepackaged file
+    export PYTHONHOME=/dev/shm/2.7.9
+    # use the user packages on scratch
+    export PYTHONUSERBASE=$SCRATCH/python-local
+    export PYTHON_MPI_CHROOT=/dev/shm
+    export PYTHON_MPI_PKGROOT=/project/projectdirs/m779/python-mpi/usg
+    export PYTHON_MPI_PACKAGES=matplotlib-1.4.3.tar.gz:mpi4py-1.3.1.tar.gz:numpy-1.9.2.tar.gz:pyton-2.7.9.tar.gz:scipy-0.15.1.tar.gz
+    # start the scripts from a fast file-system
+    cd $SCRATCH/my_codedir
 
      aprun -n 256 ./python-mpi script.py
 
