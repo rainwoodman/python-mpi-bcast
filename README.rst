@@ -39,7 +39,9 @@ What do we do about this?
 -------------------------
 
 People have thought that python just can never work well on HPC systems.
-This is not true. We can fix it; several things must be done.
+This is not true. 
+We can start 1024 Python ranks on edison.nersc.gov in 40 seconds, consistently, with
+the help of this version of :code:`python-mpi-bcast`.
 
 The idea is simple: 
 
