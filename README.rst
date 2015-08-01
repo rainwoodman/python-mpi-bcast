@@ -119,8 +119,6 @@ Here is a full job script example on Edison:
 
 .. code:: bash
 
-    # python-mpi -bcast will create this directory from the prepackaged file
-    export PYTHONHOME=/dev/shm/2.7.9
     # use the user packages on scratch
     export PYTHONUSERBASE=$SCRATCH/python-local
     export PYTHON_MPI_CHROOT=/dev/shm
