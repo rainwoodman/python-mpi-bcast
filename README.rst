@@ -3,6 +3,14 @@ python-mpi-bcast
 
 HPC friendly python interpreter that deploys packages to computing nodes via MPI.
 
+Benchmark on Edison
+-------------------
+
+We can start 12,288 ranks, each import scipy, andding doing all of these in 50 seconds.
+Refer to 
+
+.. image:: https://raw.githubusercontent.com/rainwoodman/python-mpi-bcast/master/startup-time.png
+
 Why is Python slow on a supercomputer?
 ---------------------------------------
 
