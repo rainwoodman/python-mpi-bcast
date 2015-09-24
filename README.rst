@@ -6,8 +6,8 @@ HPC friendly python interpreter that deploys packages to computing nodes via MPI
 Benchmark on Edison
 -------------------
 
-We can start 12,288 ranks, each import scipy, andding doing all of these in 50 seconds.
-Refer to 
+We can start 12,288 ranks, each import scipy, anding doing all of these in 50 seconds.
+See the following figure.
 
 .. image:: https://raw.githubusercontent.com/rainwoodman/python-mpi-bcast/master/startup-time.png
 
@@ -49,7 +49,7 @@ What do we do about this?
 People have thought that python just can never work well on HPC systems.
 This is not true. 
 We can start 1024 Python ranks on edison.nersc.gov in 40 seconds, consistently, with
-the help of this version of :code:`python-mpi-bcast`.
+the help of this version of :code:`python-mpi`.
 
 The idea is simple: 
 
@@ -60,8 +60,8 @@ If these two are done, spinning up thousands of python ranks is no slower than
 spinning up the same number of C ranks; and no modifications on the user programs
 needs to be done.
 
-The biggest part is from :code:`python-mpi` provided here, which deploy selected packages 
-to the computing node, and avoid most of the meta-data requrests.
+The biggest part is from :code:`python-mpi` provided here, which deploys selected packages 
+to the computing node, and avoids most of the meta-data requests on the shared filesystem.
 
 Here is an example of how to use the broadcast feature of python-mpi
 
@@ -74,7 +74,7 @@ Here is an example of how to use the broadcast feature of python-mpi
     aprun -n 1024 python-mpi my-jobscript.py
     
 
-Note that python-mpi will reset :code:`PYTHONHOME` and :code:`PYTHONBASE` to subdirectories of :code:`PYTHON_MPI_CHROOT`.
+Note that this version of python-mpi will reset :code:`PYTHONHOME` and :code:`PYTHONBASE` to subdirectories of :code:`PYTHON_MPI_CHROOT`.
 
 Here is the TODO list that enables the full benefits of the
 python-mpi implementation provided here. These steps can be implemented 
@@ -140,4 +140,5 @@ Here is a full job script example on Edison:
      aprun -n 256 ./python-mpi script.py
 
 
+Yu Feng - BCCP / BIDS.
 
