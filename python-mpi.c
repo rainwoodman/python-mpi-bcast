@@ -260,16 +260,20 @@ PyMPI_Main(int argc, char **argv)
   sts = Py_Main(argc, argv);
 #endif
 
-  MPI_Barrier(MPI_COMM_WORLD);
-  
-  char * cleanup = alloca(strlen(PYTHON_MPI_CHROOT_TMP) + 100);
-  sprintf(cleanup, "rm -rf \"%s\"", PYTHON_MPI_CHROOT_TMP);
-  system(cleanup);
+  if (sts == 0) {
+      MPI_Barrier(MPI_COMM_WORLD);
+  } 
+      char * cleanup = alloca(strlen(PYTHON_MPI_CHROOT_TMP) + 100);
+      sprintf(cleanup, "rm -rf \"%s\"", PYTHON_MPI_CHROOT_TMP);
+      system(cleanup);
 
-  MPI_Barrier(MPI_COMM_WORLD);
+  if (sts == 0) {
+      MPI_Barrier(MPI_COMM_WORLD);
+  } 
 
-  if (sts != 0) (void)MPI_Abort(MPI_COMM_WORLD, sts);
-
+  if (sts != 0) {
+      (void)MPI_Abort(MPI_COMM_WORLD, sts);
+  }
   /* MPI finalization */
   (void)MPI_Finalized(&flag);
 
