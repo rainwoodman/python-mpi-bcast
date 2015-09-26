@@ -19,3 +19,4 @@ PYTHONCONFIG=python-config
 
 build: 
 	$(CCDYNAMIC) -g -O0 -o python-mpi python-mpi.c `$(PYTHONCONFIG) --include --libs`
+	$(CCDYNAMIC) -g -O0 -o bcast bcast.c
