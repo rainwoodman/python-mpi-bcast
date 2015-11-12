@@ -7,13 +7,14 @@ python:
     - 3.3
 
 env:
-    - NUMPY_VERSION=1.8 OMP_NUM_THREADS=2
+    - NUMPY_VERSION=1.8 OMP_NUM_THREADS=1
+    - NUMPY_VERSION=1.9 OMP_NUM_THREADS=1
 
 before_install:
     - wget http://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh -O miniconda.sh
     - chmod +x miniconda.sh
     - ./miniconda.sh -b -p $HOME/miniconda
-    - export PATH=$HOME/bin:$PATH
+    - export PATH=$HOME/miniconda/bin:$PATH
     - conda update --yes conda
 
 install:
