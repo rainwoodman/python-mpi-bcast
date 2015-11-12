@@ -1,0 +1,26 @@
+language: python
+
+python:
+    - 2.6
+    - 2.7
+    - 3.4
+    - 3.3
+
+env:
+    - NUMPY_VERSION=1.8 OMP_NUM_THREADS=2
+
+before_install:
+    - wget http://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh -O miniconda.sh
+    - chmod +x miniconda.sh
+    - ./miniconda.sh -b -p $HOME/miniconda
+    - export PATH=$HOME/bin:$PATH
+    - conda update --yes conda
+
+install:
+    - conda create --yes -n test python=$TRAVIS_PYTHON_VERSION
+    - source activate test
+    - conda install --yes numpy=$NUMPY_VERSION nose mpi4py
+    - bash tar-anaconda.sh anaconda.tar.gz $HOME/miniconda/envs/test
+
+script: 
+    - bash runtest.sh
