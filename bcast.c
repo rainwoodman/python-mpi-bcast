@@ -1,6 +1,5 @@
-/* python-mpi with package broad-casting */
+/* broadcasting pre-built packages to computing nodes */
 /* Author: Yu Feng */
-/* Adapted from the origina python-mpi.c by Lisandro Dalcin   */
 /* Contact: rainwoodman@gmail.com */
 
 /* -------------------------------------------------------------------------- */
@@ -11,8 +10,263 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <unistd.h> /**/
-int VERBOSE = 1;
+#include <unistd.h> 
+
+static int VERBOSE = 0;
+
+struct fnlist {
+    char * path;
+    struct fnlist * next;
+} fnlist;
+
+static void 
+_mkdir(const char *dir);
+
+static char *
+basename(const char * path);
+
+static void 
+fix_permissions(char * PREFIX);
+
+static int getnid();
+
+static int ThisTask = 0;
+static int NodeRank = -1;
+MPI_Comm NODE_GROUPS;
+MPI_Comm NODE_LEADERS;
+
+static void initialize(int nid) {
+    MPI_Comm_rank(MPI_COMM_WORLD, &ThisTask);
+
+    /* First split into ranks on the same node */
+    MPI_Comm_split(MPI_COMM_WORLD, nid, ThisTask, &NODE_GROUPS);
+
+    MPI_Comm_rank(NODE_GROUPS, &NodeRank);
+
+    /* Next split by Node Rank */
+    MPI_Comm_split(MPI_COMM_WORLD, NodeRank, ThisTask, &NODE_LEADERS);
+
+}
+
+static void bcast(char * src, char * PREFIX) {
+    if(NodeRank != 0) {
+        MPI_Barrier(MPI_COMM_WORLD);
+        return;
+    }
+
+    long fsize;
+    char *fcontent;
+    char * dest = alloca(strlen(PREFIX) + 100);
+    char * filename = basename(src);
+
+    sprintf(dest, "%s/%s",  PREFIX, filename, ThisTask);
+
+    free(filename);
+
+    if(ThisTask == 0) {
+        FILE * fp = fopen(src, "r");
+        if(fp == NULL) {
+            fprintf(stderr, "package file %s not found\n", src);
+            MPI_Abort(MPI_COMM_WORLD, 1);
+        }
+        fseek(fp, 0, SEEK_END);
+        fsize = ftell(fp);
+        fseek(fp, 0, SEEK_SET);
+
+        fcontent = malloc(fsize + 1);
+        fread(fcontent, 1, fsize, fp);
+        fclose(fp);
+        MPI_Bcast(&fsize, 1, MPI_LONG, 0, NODE_LEADERS);
+        MPI_Bcast(fcontent, fsize, MPI_BYTE, 0, NODE_LEADERS);
+        if(VERBOSE)
+            printf("Bcasting %s: %ld bytes\n", src, fsize);
+    } else {
+        MPI_Bcast(&fsize, 1, MPI_LONG, 0, NODE_LEADERS);
+        fcontent = malloc(fsize + 1);
+        MPI_Bcast(fcontent, fsize, MPI_BYTE, 0, NODE_LEADERS);
+    }
+    
+    MPI_Barrier(NODE_LEADERS);
+    FILE * fp = fopen(dest, "w");
+    if(fp == NULL) {
+        fprintf(stderr, "Cannot write to %s\n", dest);
+        MPI_Abort(MPI_COMM_WORLD, 1);
+    }
+    fwrite(fcontent, 1, fsize, fp);
+    fclose(fp);
+    free(fcontent);
+    
+    char * untar = alloca(strlen(dest) + strlen(PREFIX) + 100);
+    if(!strcmp(dest + strlen(dest) - 3, "bz2")) {
+        sprintf(untar, "tar --overwrite -xjf \"%s\" -C \"%s\"", dest, PREFIX);
+    } else
+    if(!strcmp(dest + strlen(dest) - 2, "gz")) {
+        sprintf(untar, "tar --overwrite -xzf \"%s\" -C \"%s\"", dest, PREFIX);
+    } else {
+        sprintf(untar, "cp \"%s\" \"%s\"", dest, PREFIX);
+    }
+
+    if(VERBOSE)
+        printf("Running command: %s\n", untar);
+
+    system(untar);
+    unlink(dest);
+
+    MPI_Barrier(NODE_LEADERS);
+
+    MPI_Barrier(MPI_COMM_WORLD);
+
+    if(ThisTask == 0) {
+        if(VERBOSE)
+            printf("Packages delivered. \n");
+    }
+}
+
+static void 
+process_file(char * filename, char * PREFIX) 
+{
+    char path[1024];
+    int nc = 0;
+    if(ThisTask == 0) {
+        FILE * fp = fopen(filename, "r");
+        if(fp == NULL) {
+            fprintf(stderr, "failed to open package list %s.\n", filename);
+            MPI_Abort(0, MPI_COMM_WORLD);
+        }
+        while(!feof(fp)) {
+            fgets(path, 1020, fp);
+            nc = strlen(path);
+            char * p = path + nc;
+            for(p = path + nc - 1; p >= path; p --) {
+                if(isspace(*p)) *p = 0;
+                else break;
+            }
+            for(p = path; *p; p ++) {
+                if(!isspace(*p)) break;
+            }
+            nc = strlen(p) + 1;
+            if(nc == 1) continue;
+            if(p[0] == '#') continue;
+            /* fix \n */
+            MPI_Bcast(&nc, 1, MPI_INT, 0, MPI_COMM_WORLD);
+            MPI_Bcast(p, nc, MPI_BYTE, 0, MPI_COMM_WORLD);
+            bcast(p, PREFIX);
+        }
+        fclose(fp);
+        nc = 0;
+        MPI_Bcast(&nc, 1, MPI_INT, 0, MPI_COMM_WORLD);
+    } else {
+        while(1) {
+            MPI_Bcast(&nc, 1, MPI_INT, 0, MPI_COMM_WORLD);
+            if(nc == 0) break;
+            MPI_Bcast(path, nc, MPI_BYTE, 0, MPI_COMM_WORLD);
+            bcast(path, PREFIX);
+        }
+    }
+}
+
+int
+main(int argc, char **argv)
+{
+    /* first allow everyone to purge files created by me */
+    umask(0);
+
+    MPI_Init(&argc, &argv);
+
+    int nid = getnid();
+    initialize(nid);
+
+    int ch;
+    extern char * optarg;
+    extern int optind;     
+    char * PREFIX = "/dev/shm/python";
+    fnlist.next = NULL; 
+
+    while((ch = getopt(argc, argv, "vf:p:")) != -1) {
+        switch(ch) {
+            case 'v':
+                VERBOSE = 1;
+                break;
+            case 'p':
+                PREFIX = optarg;
+                break;
+            case 'f':
+                {
+                    struct fnlist * p = malloc(sizeof(fnlist));
+                    p->next = fnlist.next;
+                    fnlist.next = p;
+                    p->path = strdup(optarg);
+                }
+                break;
+            case '?':
+                if(ThisTask == 0) {
+                    fprintf(stderr, "usage: bcast [-v] [-f filelist] [-p /dev/shm/python] [packages ...]\n");
+                }
+                goto quit;
+        }
+    }
+
+    if(ThisTask == 0) {
+        if(VERBOSE) {
+            printf("tmpdir:%s\n", PREFIX);
+        }
+    }
+
+    if(NodeRank == 0) {
+        _mkdir(PREFIX);
+    }
+
+    MPI_Barrier(MPI_COMM_WORLD);
+
+    struct fnlist * p;
+    for(p = fnlist.next; p ; p = p->next) {
+        process_file(p->path, PREFIX);
+    }
+    int i;
+    for(i = optind; i < argc; i ++) {
+        bcast(argv[i], PREFIX);
+    }
+
+    fix_permissions(PREFIX);
+quit:
+    MPI_Barrier(MPI_COMM_WORLD);
+
+    MPI_Finalize();
+    return 0;
+}
+
+static void 
+_mkdir(const char *dir) 
+{
+        char * tmp = strdup(dir);
+        char *p = NULL;
+        size_t len;
+
+        len = strlen(tmp);
+        if(tmp[len - 1] == '/')
+                tmp[len - 1] = 0;
+        for(p = tmp + 1; *p; p++)
+                if(*p == '/') {
+                        *p = 0;
+                        mkdir(tmp, 0777);
+                        *p = '/';
+                }
+        mkdir(tmp, 0777);
+        free(tmp);
+}
+
+static char *
+basename(const char * path) {
+    const char * p =  path + strlen(path);
+    while(p >= path) {
+        if(*p == '/') {
+            break;
+        }
+        p--;
+    }
+    return strdup(p+1);
+}
+
 static int getnid() {
     char hostname[1024];
     int i;
@@ -60,119 +314,13 @@ static int getnid() {
     MPI_Barrier(MPI_COMM_WORLD);
     return rt;
 }
-static int bcast_packages(char ** PACKAGES, int NPACKAGES, char * chroot) {
-    int i;
-    int nid = getnid();
 
-    int ThisTask = 0;
-    int NodeRank = -1;
-
-    MPI_Comm_rank(MPI_COMM_WORLD, &ThisTask);
-
-    MPI_Comm NODE_GROUPS;
-    MPI_Comm NODE_LEADERS;
-
-    /* First split into ranks on the same node */
-    MPI_Comm_split(MPI_COMM_WORLD, nid, ThisTask, &NODE_GROUPS);
-
-    MPI_Comm_rank(NODE_GROUPS, &NodeRank);
-
-    /* Next split by Node Rank */
-    MPI_Comm_split(MPI_COMM_WORLD, NodeRank, ThisTask, &NODE_LEADERS);
-
-    /* now bcast packages to PYTHON_MPI_CHROOT */
-
+static void 
+fix_permissions(char * PREFIX) 
+{
     if(NodeRank == 0) {
-        if(ThisTask == 0) {
-            if(VERBOSE) {
-                printf("%d Packages\n", NPACKAGES);
-                printf("tmpdir:%s\n", chroot);
-            }
-        }
-
-        if(VERBOSE)
-            printf("node nid:%d\n", nid);
-
-        for(i = 0; PACKAGES[i] != NULL; i ++) {
-            long fsize;
-            char *fcontent;
-            char * dest = alloca(strlen(chroot) + 100);
-            char * src = PACKAGES[i];
-            mkdir(chroot, 0777);
-            sprintf(dest, "%s/_thispackage.tar.gz",  chroot, ThisTask);
-
-            if(ThisTask == 0) {
-                FILE * fp = fopen(src, "r");
-                if(fp == NULL) {
-                    fprintf(stderr, "package file %s not found\n", src);
-                    MPI_Abort(MPI_COMM_WORLD, 1);
-                }
-                fseek(fp, 0, SEEK_END);
-                fsize = ftell(fp);
-                fseek(fp, 0, SEEK_SET);
-
-                fcontent = malloc(fsize + 1);
-                fread(fcontent, 1, fsize, fp);
-                fclose(fp);
-                MPI_Bcast(&fsize, 1, MPI_LONG, 0, NODE_LEADERS);
-                MPI_Bcast(fcontent, fsize, MPI_BYTE, 0, NODE_LEADERS);
-                if(VERBOSE)
-                    printf("operating %s: %ld bytes\n", PACKAGES[i], fsize);
-            } else {
-                MPI_Bcast(&fsize, 1, MPI_LONG, 0, NODE_LEADERS);
-                fcontent = malloc(fsize + 1);
-                MPI_Bcast(fcontent, fsize, MPI_BYTE, 0, NODE_LEADERS);
-            }
-            
-            MPI_Barrier(NODE_LEADERS);
-            FILE * fp = fopen(dest, "w");
-            fwrite(fcontent, 1, fsize, fp);
-            fclose(fp);
-            free(fcontent);
-            
-            char * untar = alloca(strlen(dest) + strlen(chroot) + 100);
-            sprintf(untar, "tar --overwrite -xzf \"%s\" -C \"%s\"", dest, chroot);
-            system(untar);
-            unlink(dest);
-
-            MPI_Barrier(NODE_LEADERS);
-        }
-        char * chmod = alloca(strlen(chroot) + 100);
-        sprintf(chmod, "chmod -fR 777 \"%s\"", chroot);
+        char * chmod = alloca(strlen(PREFIX) + 100);
+        sprintf(chmod, "chmod -fR 777 \"%s\"", PREFIX);
         system(chmod);
     }
-    MPI_Barrier(MPI_COMM_WORLD);
-    if(ThisTask == 0) {
-        if(VERBOSE)
-            printf("Packages delivered. \n");
-    }
 }
-int
-main(int argc, char **argv)
-{
-  int sts=0, flag=1, finalize=0;
-
-  /* MPI initalization */
-  (void)MPI_Initialized(&flag);
-
-  if (!flag) {
-#if defined(MPI_VERSION) && (MPI_VERSION > 1)
-    int required = MPI_THREAD_MULTIPLE;
-    int provided = MPI_THREAD_SINGLE;
-    (void)MPI_Init_thread(&argc, &argv, required, &provided);
-#else
-    (void)MPI_Init(&argc, &argv);
-#endif
-    finalize = 1;
-  }
-
-  bcast_packages(argv + 2, argc - 2, argv[1]);
-
-  /* completely ignore PYTHONPATH for now */
-
-  MPI_Barrier(MPI_COMM_WORLD);
-
-    MPI_Finalize();
-  return 0;
-}
-
