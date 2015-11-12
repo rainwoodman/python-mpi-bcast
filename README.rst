@@ -1,7 +1,11 @@
 python-mpi-bcast
 ================
 
-HPC friendly python interpreter that deploys packages to computing nodes via MPI.
+An HPC friendly python environment that deploys packages to computing nodes via MPI.
+
+.. image:: https://api.travis-ci.org/rainwoodman/python-mpi-bcast.svg
+    :alt: Build Status
+    :target: https://travis-ci.org/rainwoodman/python-mpi-bcast/
 
 Benchmark on Edison
 -------------------
@@ -24,16 +28,14 @@ operations become a burden to the shared file system, just like the
 shared library burden, described in [Hopper-UG]
 
 For example, on a typical python installation with numpy the number of
-file operations to 
-
-.. code::
+file operations to  ::
 
    $ strace -ff -e file python -c '' 2>&1 |wc -l
    917
 
    $ strace -ff -e file python -c 'import numpy.fft' 2>&1 |wc -l
-   4557
 
+   4557
    $ strace -ff -e file python -c 'import numpy.fft; import scipy.interpolate' 2>&1|wc -l
    8089
 
@@ -48,8 +50,8 @@ What do we do about this?
 
 People have thought that python just can never work well on HPC systems.
 This is not true. 
-We can start 1024 Python ranks on edison.nersc.gov in 40 seconds, consistently, with
-the help of this version of :code:`python-mpi`.
+We can start 1024 Python ranks on edison.nersc.gov in 40 seconds, consistently as long as we
+follow the principles in this page. We will need the help of a tool 'bcast' that is provided here.
 
 The idea is simple: 
 
@@ -60,53 +62,46 @@ If these two are done, spinning up thousands of python ranks is no slower than
 spinning up the same number of C ranks; and no modifications on the user programs
 needs to be done.
 
-The biggest part is from :code:`python-mpi` provided here, which deploys selected packages 
-to the computing node, and avoids most of the meta-data requests on the shared filesystem.
+The biggest part is from :code:`bcast` provided here, which deploys selected packages 
+to the computing node, and properly set up the python environment to avoid
+most of the meta-data requests on the shared filesystem.
 
-Here is an example of how to use the broadcast feature of python-mpi
-
-.. code:: bash
-
-    export PYTHON_MPI_CHROOT=/dev/shm
-    export PYTHON_MPI_PKGROOT=/project/projectdirs/m779/python-mpi/usg
-    export PYTHON_MPI_PACKAGES=matplotlib-1.4.3.tar.gz:mpi4py-1.3.1.tar.gz:numpy-1.9.2.tar.gz:python-2.7.9.tar.gz:scipy-0.15.1.tar.gz
-
-    aprun -n 1024 python-mpi my-jobscript.py
-    
-
-Note that this version of python-mpi will reset :code:`PYTHONHOME` and :code:`PYTHONBASE` to subdirectories of :code:`PYTHON_MPI_CHROOT`.
 
 Here is the TODO list that enables the full benefits of the
 python-mpi implementation provided here. These steps can be implemented 
 either by the computing faciliaties, or by a user.
 
-1. Redirect :code:`PYTHONUSERBASE` to a fast file system; e.g. 
-   the scratch or project file systems. This is very important. The default location
-   is usually in your home directory. 
-
-   .. notes:: 
-   
-      For example add this line to the profile script on Edison:
-
-      .. code:: bash
-
-          export PYTHONUSERBASE=$SCRATCH/python-local
-
-   This does mean all packages installed with '--user' need to be reinstalled.
-   
-   .. attention::
-   
-      **If PYTHONUSERBASE is not reset to a fast location, the start time will still
-      be very slow.**
-
-2. Prepackage the packages to .tar.gz files
-
-   Quite a lot of meta requests are made just for loading
-   these system-wide packages, which barely change at all from time to time.
-   
-   The tar.gz files must be packed at :code:`PYTHON_MPI_PKGROOT`. Here is an example:
+1. Install Conda/Anaconda, and create a tar ball of the entire installation with
+   the supplied 'tar-anaconda.sh'
 
    .. code:: bash
+
+        wget http://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh -O miniconda.sh
+        chmod +x miniconda.sh
+        ./miniconda.sh -b -p $HOME/miniconda
+        export PATH=$HOME/miniconda/bin:$PATH
+        conda update --yes conda
+        conda create --yes -n test python=2.7
+        source activate test
+        conda install --yes numpy=1.9 nose mpi4py # install other packages as well
+        bash tar-anaconda.sh anaconda.tar.gz $HOME/miniconda/envs/test
+
+    .. note::
+        
+        On some systems, an anaconda based installation is already supplied by the vendor.
+        (e.g. Edison and Cori). In that case, find the location of that installation
+        via the module file, and directly use tar-anaconda.sh to generate a tar ball.
+
+    .. attention::
+   
+        copy the tar ball file to a fast file system, e.g. scratch or project directory.
+
+        We will assume the location is $SCRATCH/2.7-anaconda.tar.gz
+
+2. Alternatively, prepackage individual python packages to .tar.gz files. On some systems
+   where the conda prebuilt packages are not an option, this will be the only feasible way.
+
+    .. code:: bash
         
         cd $PYTHON_MPI_PKGROOT 
         easy_install --prefix=$TMPDIR/mypackage
@@ -115,30 +110,61 @@ either by the computing faciliaties, or by a user.
             -C $TMPDIR/mypackage
             -czvf mypackage-version.tar.gz
 
-3. Copy the relevant python script to a shared location, and run from there.
+    .. note::
+
+        Still, the installation of some packages may not be this trivial.
+        Luckily, usually the vendor must have compiled most python packages, and it is worthwhile
+        to inspect the module files and directly run the tar command there, skipping the installation
+        part.
+
+3. Reset :code:`PYTHONHOME` :code:`PYTHONBASE`, :code:`PYTHONUSERBASE`, and :code:`PATH`, 
+:code:`LD_LIBRARY_PATH` to /dev/shm/local.
+
+This can be done by sourcing 'activate.sh'. activate.sh takes 2 arguments, the prefix of the new python
+environment, and the command prefix to launch 'bcast'. activate.sh also provide a 'bcast' function
+to the shell script, which will simply run bcast with the provided prefix. A good choice of the prefix
+is /dev/shm/local. If the computing nodes contain private scratch hardrives, that would be a good location as well.
+
+.. warning::
+
+    All packages install in :code:`~/.local` is unavailable during the session.
+
+4. Copy the relevant python scripts to a fast filesystem.
 
    Especially be aware of starting a python script in HOME directory. It can be very
    slow. (recall sometimes ls on home directory takes for ever?)
    
-It also helps to check if LD_LIBRARY_PATH and PATH contains references to the slow
-HOME filesystem; redirect them as well. This will speed up the start-up of all
-dynamic executables.
 
+Here is a full job script example on Edison following all of the guidelines.
+Notice that on Edison, I have already created the tar ball of the
+2.7 and 3.4 version of anaconda installation at /project/projectdirs/m779/python-mpi
 
-Here is a full job script example on Edison:
+.. code::bash
 
-.. code:: bash
+    #PBS -j eo
+    #PBS -l mppwidth=1024
+    #PBS -q debug
 
-    # use the user packages on scratch
-    export PYTHONUSERBASE=$SCRATCH/python-local
-    export PYTHON_MPI_CHROOT=/dev/shm
-    export PYTHON_MPI_PKGROOT=/project/projectdirs/m779/python-mpi/usg
-    export PYTHON_MPI_PACKAGES=matplotlib-1.4.3.tar.gz:mpi4py-1.3.1.tar.gz:numpy-1.9.2.tar.gz:pyton-2.7.9.tar.gz:scipy-0.15.1.tar.gz
-    # start the scripts from a fast file-system
-    cd $SCRATCH/my_codedir
+    set -x
+    export OMP_NUM_THREADS=1
 
-     aprun -n 256 ./python-mpi script.py
+    source /project/projectdirs/m779/python-mpi/activate.sh /dev/shm/local "aprun -n 1024 -d 1"
 
+    cd $PBS_O_WORKDIR
+
+    # send the anaconda packages
+    bcast -v /project/projectdirs/m779/python-mpi/2.7-anaconda.tar.gz 
+
+    # location of MPI4PY in /dev/shm/local
+    export MPI4PY=/dev/shm/local/lib/python2.7/site-packages/mpi4py
+
+    # testpkg contains the tar-ed version of the script;
+    # if the script is sufficiently complicated, it helps to treat it like 
+    # another package.
+
+    bcast -v testpkg.tar.gz
+
+    time aprun -n 1024 -d 1 $MPI4PY/bin/python-mpi /dev/shm/local/testpkg/main.py
 
 Yu Feng - BCCP / BIDS.
 
