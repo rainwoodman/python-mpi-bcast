@@ -74,48 +74,48 @@ either by the computing faciliaties, or by a user.
 1. Install Conda/Anaconda, and create a tar ball of the entire installation with
    the supplied 'tar-anaconda.sh'
 
-   .. code:: bash
+.. code:: bash
 
-        wget http://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh -O miniconda.sh
-        chmod +x miniconda.sh
-        ./miniconda.sh -b -p $HOME/miniconda
-        export PATH=$HOME/miniconda/bin:$PATH
-        conda update --yes conda
-        conda create --yes -n test python=2.7
-        source activate test
-        conda install --yes numpy=1.9 nose mpi4py # install other packages as well
-        bash tar-anaconda.sh anaconda.tar.gz $HOME/miniconda/envs/test
+    wget http://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh -O miniconda.sh
+    chmod +x miniconda.sh
+    ./miniconda.sh -b -p $HOME/miniconda
+    export PATH=$HOME/miniconda/bin:$PATH
+    conda update --yes conda
+    conda create --yes -n test python=2.7
+    source activate test
+    conda install --yes numpy=1.9 nose mpi4py # install other packages as well
+    bash tar-anaconda.sh anaconda.tar.gz $HOME/miniconda/envs/test
 
-    .. note::
-        
-        On some systems, an anaconda based installation is already supplied by the vendor.
-        (e.g. Edison and Cori). In that case, find the location of that installation
-        via the module file, and directly use tar-anaconda.sh to generate a tar ball.
+.. note::
+    
+    On some systems, an anaconda based installation is already supplied by the vendor.
+    (e.g. Edison and Cori). In that case, find the location of that installation
+    via the module file, and directly use tar-anaconda.sh to generate a tar ball.
 
-    .. attention::
-   
-        copy the tar ball file to a fast file system, e.g. scratch or project directory.
+.. attention::
 
-        We will assume the location is $SCRATCH/2.7-anaconda.tar.gz
+    copy the tar ball file to a fast file system, e.g. scratch or project directory.
+
+    We will assume the location is $SCRATCH/2.7-anaconda.tar.gz
 
 2. Alternatively, prepackage individual python packages to .tar.gz files. On some systems
    where the conda prebuilt packages are not an option, this will be the only feasible way.
 
-    .. code:: bash
-        
-        cd $PYTHON_MPI_PKGROOT 
-        easy_install --prefix=$TMPDIR/mypackage
-        tar --exclude=*.png --exclude=*.jpg --exclude=*.html 
-            --exclude=*.pyo --exclude=*.pyc  \
-            -C $TMPDIR/mypackage
-            -czvf mypackage-version.tar.gz
+.. code:: bash
+    
+    cd $PYTHON_MPI_PKGROOT 
+    easy_install --prefix=$TMPDIR/mypackage
+    tar --exclude=*.png --exclude=*.jpg --exclude=*.html 
+        --exclude=*.pyo --exclude=*.pyc  \
+        -C $TMPDIR/mypackage
+        -czvf mypackage-version.tar.gz
 
-    .. note::
+.. note::
 
-        Still, the installation of some packages may not be this trivial.
-        Luckily, usually the vendor must have compiled most python packages, and it is worthwhile
-        to inspect the module files and directly run the tar command there, skipping the installation
-        part.
+    Still, the installation of some packages may not be this trivial.
+    Luckily, usually the vendor must have compiled most python packages, and it is worthwhile
+    to inspect the module files and directly run the tar command there, skipping the installation
+    part.
 
 3. Reset :code:`PYTHONHOME` :code:`PYTHONBASE`, :code:`PYTHONUSERBASE`, and :code:`PATH`, 
 :code:`LD_LIBRARY_PATH` to /dev/shm/local.
@@ -131,15 +131,15 @@ is /dev/shm/local. If the computing nodes contain private scratch hardrives, tha
 
 4. Copy the relevant python scripts to a fast filesystem.
 
-   Especially be aware of starting a python script in HOME directory. It can be very
-   slow. (recall sometimes ls on home directory takes for ever?)
+Especially be aware of starting a python script in HOME directory. It can be very
+slow. (recall sometimes ls on home directory takes for ever?)
    
 
 Here is a full job script example on Edison following all of the guidelines.
 Notice that on Edison, I have already created the tar ball of the
 2.7 and 3.4 version of anaconda installation at /project/projectdirs/m779/python-mpi
 
-.. code::bash
+.. code:: bash
 
     #PBS -j eo
     #PBS -l mppwidth=1024
