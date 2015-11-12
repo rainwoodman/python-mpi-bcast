@@ -17,6 +17,9 @@ PYTHONCONFIG=python-config
 
 .PHONY: build clean
 
-build: 
+all: python-mpi bcast
+python-mpi: python-mpi.c 
 	$(CCDYNAMIC) -g -O0 -o python-mpi python-mpi.c `$(PYTHONCONFIG) --include --libs`
+
+bcast : bcast.c
 	$(CCDYNAMIC) -g -O0 -o bcast bcast.c
