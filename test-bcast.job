@@ -12,8 +12,9 @@ cd $PBS_O_WORKDIR
 # send the anaconda packages
 bcast -v /project/projectdirs/m779/python-mpi/2.7-anaconda.tar.gz 
 
-# location of MPI4PY in /dev/shm/local
-export MPI4PY=/dev/shm/local/lib/python2.7/site-packages/mpi4py
+# location of MPI4PY locally, 
+# must be compatible with the one in 2.7-anaconda.tar.gz
+export MPI4PY=/usr/common/usg/python/2.7-anaconda/lib/python2.7/site-packages/mpi4py
 
 bcast -v testpkg.tar.gz
 
