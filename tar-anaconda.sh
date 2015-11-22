@@ -1,4 +1,4 @@
-if [ "x$1" == "-h" ]; then
+if [ "x$1" == "x-h" ]; then
     echo $0 filename.tar.gz  anaconda path
     exit
 fi
