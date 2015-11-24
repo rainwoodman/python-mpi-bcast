@@ -99,16 +99,20 @@ either by the computing faciliaties, or by a user.
     We will assume the location is $SCRATCH/2.7-anaconda.tar.gz
 
 2. Alternatively, prepackage individual python packages to .tar.gz files. On some systems
-   where the conda prebuilt packages are not an option, this will be the only feasible way.
+   where the conda prebuilt packages are not an option, this will be the only feasible way. 
+   We provide a script tar-pip.sh for this:
 
 .. code:: bash
     
-    cd $PYTHON_MPI_PKGROOT 
-    easy_install --prefix=$TMPDIR/mypackage
-    tar --exclude=*.png --exclude=*.jpg --exclude=*.html 
-        --exclude=*.pyo --exclude=*.pyc  \
-        -C $TMPDIR/mypackage
-        -czvf mypackage-version.tar.gz
+    # build a fitsio bundle
+
+    bash tar-pip.sh fitsio-0.9.8rc2.tar.gz https://github.com/esheldon/fitsio/archive/v0.9.8rc2.zip
+
+    # build a bundle for locally checked out code with a setup.py
+
+    bash tar-pip.sh my-package.tar.gz .
+
+    # you get the idea
 
 .. note::
 
@@ -155,16 +159,13 @@ Notice that on Edison, I have already created the tar ball of the
     # send the anaconda packages
     bcast -v /project/projectdirs/m779/python-mpi/2.7-anaconda.tar.gz 
 
-    # location of MPI4PY in /dev/shm/local
-    export MPI4PY=/dev/shm/local/lib/python2.7/site-packages/mpi4py
-
     # testpkg contains the tar-ed version of the script;
     # if the script is sufficiently complicated, it helps to treat it like 
     # another package.
 
     bcast -v testpkg.tar.gz
 
-    time aprun -n 1024 -d 1 $MPI4PY/bin/python-mpi /dev/shm/local/testpkg/main.py
+    time aprun -n 1024 -d 1 python-mpi /dev/shm/local/testpkg/main.py
 
 Yu Feng - BCCP / BIDS.
 
