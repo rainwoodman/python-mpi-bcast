@@ -14,7 +14,7 @@ fi
 DIRNAME=`dirname ${_SCRIPT_LOCATION}`
 
 function finish {
-    time $APRUN rm -rf $BCASTROOT
+    $APRUN rm -rf $BCASTROOT
 }
 
 trap finish EXIT
@@ -22,7 +22,7 @@ trap finish TERM
 trap finish KILL
 
 function bcast {
-    time $APRUN $DIRNAME/bcast -p $BCASTROOT $*
+    $APRUN $DIRNAME/bcast -p $BCASTROOT $*
 }
 
 export PYTHONPATH=$BCASTROOT/lib/python
