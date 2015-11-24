@@ -11,7 +11,8 @@ Benchmark on Edison
 -------------------
 
 We can start 12,288 ranks, each import scipy, anding doing all of these in 50 seconds.
-See the following figure.
+See the following figure. The current version (with bcast as a separate executable) 
+is probably even faster (benchmark is pending).
 
 .. image:: https://raw.githubusercontent.com/rainwoodman/python-mpi-bcast/master/startup-time.png
 
