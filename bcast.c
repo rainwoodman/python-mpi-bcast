@@ -11,7 +11,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h> 
-
+#include <sys/stat.h>
+#include <ctype.h>
 static int VERBOSE = 0;
 
 struct fnlist {
@@ -59,6 +60,9 @@ static void bcast(char * src, char * PREFIX) {
     char * dest = alloca(strlen(PREFIX) + 100);
     char * filename = basename(src);
 
+    char hostname[1024];
+    gethostname(hostname, 1024);
+
     sprintf(dest, "%s/%s",  PREFIX, filename, ThisTask);
 
     free(filename);
@@ -78,8 +82,10 @@ static void bcast(char * src, char * PREFIX) {
         fclose(fp);
         MPI_Bcast(&fsize, 1, MPI_LONG, 0, NODE_LEADERS);
         MPI_Bcast(fcontent, fsize, MPI_BYTE, 0, NODE_LEADERS);
-        if(VERBOSE)
+        if(VERBOSE) {
             printf("Bcasting %s: %ld bytes\n", src, fsize);
+            fflush(stdout);
+        }
     } else {
         MPI_Bcast(&fsize, 1, MPI_LONG, 0, NODE_LEADERS);
         fcontent = malloc(fsize + 1);
@@ -106,9 +112,10 @@ static void bcast(char * src, char * PREFIX) {
         sprintf(untar, "cp \"%s\" \"%s\"", dest, PREFIX);
     }
 
-    if(VERBOSE)
-        printf("Running command: %s\n", untar);
-
+    if(VERBOSE) {
+        printf("%s: Running command: %s\n", hostname, untar);
+        fflush(stdout);
+    }
     system(untar);
     unlink(dest);
 
@@ -117,8 +124,10 @@ static void bcast(char * src, char * PREFIX) {
     MPI_Barrier(MPI_COMM_WORLD);
 
     if(ThisTask == 0) {
-        if(VERBOSE)
+        if(VERBOSE) {
             printf("Packages delivered. \n");
+            fflush(stdout);
+        }
     }
 }
 
@@ -209,6 +218,7 @@ main(int argc, char **argv)
     if(ThisTask == 0) {
         if(VERBOSE) {
             printf("tmpdir:%s\n", PREFIX);
+            fflush(stdout);
         }
     }
 
@@ -288,7 +298,8 @@ static int getnid() {
     nid = malloc(sizeof(int) * NTask);
     MPI_Allgather(hostname, ml, MPI_BYTE, buffer, ml, MPI_BYTE, MPI_COMM_WORLD);
 
-    qsort(buffer, NTask, ml, strcmp);
+    typedef int(*compar_fn)(const void *, const void *);
+    qsort(buffer, NTask, ml, (compar_fn) strcmp);
     
     nid[0] = 0;
     for(i = 1; i < NTask; i ++) {
