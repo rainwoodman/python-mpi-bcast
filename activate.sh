@@ -21,15 +21,17 @@ trap finish EXIT
 trap finish TERM
 trap finish KILL
 
-function bcast {
-    $APRUN $DIRNAME/bcast -p $BCASTROOT $*
-}
-
 export PYTHONPATH=$BCASTROOT/lib/python
 export PYTHONHOME=$BCASTROOT
 export PYTHONUSERBASE=$BCASTROOT
+OLD_LD_LIBRARY_PATH=$LD_LIBRARY_PATH
 export LD_LIBRARY_PATH=$BCASTROOT/lib:$LD_LIBRARY_PATH
 export PATH=$BCASTROOT/bin:$PATH
+
+function bcast {
+    LD_LIBRARY_PATH=${OLD_LD_LIBRARY_PATH} $APRUN $DIRNAME/bcast -p $BCASTROOT $* || return 1
+}
+
 
 if [[ -n $BASH_VERSION ]]; then
     hash -r
