@@ -1,0 +1,19 @@
+#! /bin/bash
+
+#SBATCH -N @N@
+#SBATCH -o bench-@N@.out
+#SBATCH -t 00:10:00
+
+set -x
+export OMP_NUM_THREADS=1
+export ATP_ENABLED=0
+
+source /project/projectdirs/m779/python-mpi/activate.sh /dev/shm/local "srun -N @N@"
+
+# send the anaconda packages
+time bcast -t \
+/project/projectdirs/m779/python-mpi/cray-xc30/cray-xc30.tar.gz \
+/project/projectdirs/m779/yfeng1/python-2.7-edison.tar.gz
+
+cd /dev/shm/local
+time srun -N @N@ --ntasks-per-node=24 python-mpi -c 'import scipy;from mpi4py import MPI;'
