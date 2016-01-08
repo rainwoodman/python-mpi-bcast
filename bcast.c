@@ -14,6 +14,7 @@
 #include <sys/stat.h>
 #include <ctype.h>
 static int VERBOSE = 0;
+static int TIME = 0;
 
 struct fnlist {
     char * path;
@@ -35,6 +36,10 @@ static int ThisTask = 0;
 static int NodeRank = -1;
 MPI_Comm NODE_GROUPS;
 MPI_Comm NODE_LEADERS;
+
+static double t_bcast;
+static double t_tar;
+static double t_chmod;
 
 static void initialize(int nid) {
     MPI_Comm_rank(MPI_COMM_WORLD, &ThisTask);
@@ -61,11 +66,15 @@ static void bcast(char * src, char * PREFIX) {
     char * filename = basename(src);
 
     char hostname[1024];
+    double t1;
+
     gethostname(hostname, 1024);
 
     sprintf(dest, "%s/%s",  PREFIX, filename, ThisTask);
 
     free(filename);
+
+    t1 = MPI_Wtime();
 
     if(ThisTask == 0) {
         FILE * fp = fopen(src, "r");
@@ -101,11 +110,17 @@ static void bcast(char * src, char * PREFIX) {
     fwrite(fcontent, 1, fsize, fp);
     fclose(fp);
     free(fcontent);
+
+    t_bcast += MPI_Wtime() - t1;
     
+    t1 = MPI_Wtime();
     char * untar = alloca(strlen(dest) + strlen(PREFIX) + 100);
     if(!strcmp(dest + strlen(dest) - 3, "bz2")) {
         sprintf(untar, "tar --overwrite -xjf \"%s\" -C \"%s\"", dest, PREFIX);
     } else
+    if(!strcmp(dest + strlen(dest) - 3, "tar")) {
+        sprintf(untar, "tar --overwrite -xf \"%s\" -C \"%s\"", dest, PREFIX);
+    } else 
     if(!strcmp(dest + strlen(dest) - 2, "gz")) {
         sprintf(untar, "tar --overwrite -xzf \"%s\" -C \"%s\"", dest, PREFIX);
     } else {
@@ -122,6 +137,7 @@ static void bcast(char * src, char * PREFIX) {
     MPI_Barrier(NODE_LEADERS);
 
     MPI_Barrier(MPI_COMM_WORLD);
+    t_tar += MPI_Wtime() - t1;
 
     if(ThisTask == 0) {
         if(VERBOSE) {
@@ -185,16 +201,23 @@ main(int argc, char **argv)
     int nid = getnid();
     initialize(nid);
 
+    t_bcast = 0;
+    t_tar = 0;
+    t_chmod = 0;
+
     int ch;
     extern char * optarg;
     extern int optind;     
     char * PREFIX = "/dev/shm/python";
     fnlist.next = NULL; 
 
-    while((ch = getopt(argc, argv, "vf:p:")) != -1) {
+    while((ch = getopt(argc, argv, "vtf:p:")) != -1) {
         switch(ch) {
             case 'v':
                 VERBOSE = 1;
+                break;
+            case 't':
+                TIME = 1;
                 break;
             case 'p':
                 PREFIX = optarg;
@@ -238,6 +261,13 @@ main(int argc, char **argv)
     }
 
     fix_permissions(PREFIX);
+
+    if(ThisTask == 0) 
+    if(TIME) {
+        printf("Time : %g in bcast\n", t_bcast);
+        printf("Time : %g in tar\n", t_tar);
+        printf("Time : %g in chmod\n", t_chmod);
+    }
 quit:
     MPI_Barrier(MPI_COMM_WORLD);
 
@@ -329,9 +359,12 @@ static int getnid() {
 static void 
 fix_permissions(char * PREFIX) 
 {
+    double t1 = MPI_Wtime();
+
     if(NodeRank == 0) {
         char * chmod = alloca(strlen(PREFIX) + 100);
         sprintf(chmod, "chmod -fR 777 \"%s\"", PREFIX);
         system(chmod);
     }
+    t_chmod += MPI_Wtime() - t1;
 }

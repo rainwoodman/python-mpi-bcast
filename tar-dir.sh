@@ -5,7 +5,7 @@ fi
 
 OUTPUT=`mktemp --suffix=.tar.gz`
 (
-cd $1/..
+cd `dirname $1`
 tar -cf - `basename $1` | gzip -9 - > $OUTPUT
 )
 echo $OUTPUT

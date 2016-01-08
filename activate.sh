@@ -29,9 +29,8 @@ export LD_LIBRARY_PATH=$BCASTROOT/lib:$LD_LIBRARY_PATH
 export PATH=$BCASTROOT/bin:$PATH
 
 function bcast {
-    LD_LIBRARY_PATH=${OLD_LD_LIBRARY_PATH} $APRUN $DIRNAME/bcast -p $BCASTROOT $* || return 1
+    LD_LIBRARY_PATH= $APRUN $DIRNAME/bcast -p $BCASTROOT $* || return 1
 }
-
 
 if [[ -n $BASH_VERSION ]]; then
     hash -r
