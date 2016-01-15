@@ -41,7 +41,7 @@ MPI_Comm NODE_LEADERS;
 
 static double t_bcast;
 static double t_tar;
-static double t_chmod;
+static double t_init;
 
 static void initialize(int nid) {
     MPI_Comm_rank(MPI_COMM_WORLD, &ThisTask);
@@ -62,15 +62,11 @@ static void bcast(char * src, char * PREFIX) {
         return;
     }
 
+    double t1;
     long fsize;
     char *fcontent;
     char * dest = alloca(strlen(PREFIX) + 100);
     char * filename = basename(src);
-
-    char hostname[1024];
-    double t1;
-
-    gethostname(hostname, 1024);
 
     sprintf(dest, "%s/%s",  PREFIX, filename, ThisTask);
 
@@ -220,12 +216,16 @@ main(int argc, char **argv)
     MPI_Init(&argc, &argv);
     double t0 = MPI_Wtime();
 
+    t_bcast = 0;
+    t_tar = 0;
+    t_init = 0;
+
     int nid = getnid();
     initialize(nid);
 
-    t_bcast = 0;
-    t_tar = 0;
-    t_chmod = 0;
+    t_init = MPI_Wtime() - t0;
+
+    t0 = MPI_Wtime();
 
     int ch;
     extern char * optarg;
@@ -284,6 +284,7 @@ main(int argc, char **argv)
 
     if(ThisTask == 0) 
     if(TIME) {
+        printf("Time : %g in init\n", t_init);
         printf("Time : %g in bcast\n", t_bcast);
         printf("Time : %g in tar\n", t_tar);
         printf("Time : %g in total \n", MPI_Wtime() - t0);
@@ -357,11 +358,6 @@ static int getnid() {
             nid[i] = nid[i - 1] + 1;
         } else {
             nid[i] = nid[i - 1];
-        }
-    }
-    if(ThisTask == 0) {
-        for(i = 0; i < NTask; i ++) {
-            //printf("%d :%s:%d\n", i, buffer + i * ml, nid[i]);
         }
     }
     for(i = 0; i < NTask; i ++) {
