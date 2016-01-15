@@ -1,11 +1,12 @@
-/* broadcasting pre-built packages to computing nodes */
-/* Author: Yu Feng */
-/* Contact: rainwoodman@gmail.com */
+/*********************************************
+ * broadcasting pre-built packages to computing nodes 
+ * Author: Yu Feng 
+ * Contact: rainwoodman@gmail.com 
+ *
+ * This file is part of python-mpi-bcast
+ *
+ *******************************************/
 
-/* -------------------------------------------------------------------------- */
-
-#define MPICH_IGNORE_CXX_SEEK 1
-#define OMPI_IGNORE_CXX_SEEK 1
 #include <mpi.h>
 #include <string.h>
 #include <stdio.h>
@@ -13,6 +14,7 @@
 #include <unistd.h> 
 #include <sys/stat.h>
 #include <ctype.h>
+
 static int VERBOSE = 0;
 static int TIME = 0;
 

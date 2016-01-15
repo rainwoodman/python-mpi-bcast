@@ -3,6 +3,11 @@
  *   * Use it as you wish.
  *    */
 
+/* Modified from the untar.c example of libarchive. 
+ *
+ * Yu Feng, Jan. 2016 
+ * */
+
 #include <sys/types.h>
 
 #include <sys/stat.h>

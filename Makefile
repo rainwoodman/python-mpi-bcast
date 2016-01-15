@@ -1,7 +1,6 @@
 CC=mpicc
 CCDYNAMIC=$(CC) -dynamic
 LDSHARED=$(CC) -shared
-PYTHONCONFIG=python-config
 
 # on BlueWaters (cray)
 # make CC='cc -static'
@@ -19,11 +18,8 @@ PYTHONCONFIG=python-config
 
 all: bcast
 
-python-mpi: python-mpi.c 
-	$(CCDYNAMIC) -g -O0 -o python-mpi python-mpi.c `$(PYTHONCONFIG) --include --libs`
-
-bcast : bcast.c tar.c _inst/lib/libarchive.a
-	$(CC) -I_inst/include -L_inst/lib -g -O0 -o bcast bcast.c tar.c -larchive -lz -lbz2
+bcast : bcast.c bcast-tar.c _inst/lib/libarchive.a
+	$(CC) -I_inst/include -L_inst/lib -g -O0 -o bcast bcast.c bcast-tar.c -larchive -lz -lbz2
 
 libarchive-3.1.2.tar.gz:
 	wget http://www.libarchive.org/downloads/libarchive-3.1.2.tar.gz

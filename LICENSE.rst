@@ -1,5 +1,5 @@
-LICENSE: Python Interpreter with MPI Broadcast
-==============================================
+LICENSE: Launching Python Applications with MPI Broadcast
+=========================================================
 
 :Author:       Yu Feng
 :Contact:      rainwoodman@gmail.com
