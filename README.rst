@@ -7,13 +7,23 @@ An HPC friendly python environment that deploys packages to computing nodes via 
     :alt: Build Status
     :target: https://travis-ci.org/rainwoodman/python-mpi-bcast/
 
-Benchmark on Edison
--------------------
+Benchmark on Cray systems
+-------------------------
 
-We can start 12,288 ranks, each import scipy, anding doing all of these in 50 seconds.
-See the following figure. 
+We performed benchmarks on the Cray XC-30 system Edison at NERSC and the Cray XT system BlueWaters
+at NCSA.
 
-.. image:: https://raw.githubusercontent.com/rainwoodman/python-mpi-bcast/master/cray-xc30/startup-time.png
+See the following figure. python-mpi-bcast demonstrates excellent scaling properties.
+We can start 12,288 ranks, each import scipy, and doing all of these in 50 seconds. 
+
+The overhead of python-mpi-bcast at full machine capability is comparable to the ALPS applicationg launching
+overhead.
+
+.. image:: https://raw.githubusercontent.com/rainwoodman/python-mpi-bcast/master/cray-xc30/cray-xc30-startup-time.png
+    :width: 40%
+
+.. image:: https://raw.githubusercontent.com/rainwoodman/python-mpi-bcast/master/cray-xt/cray-xt-startup-time.png
+    :width: 40%
 
 Why is Python slow on a supercomputer?
 ---------------------------------------
