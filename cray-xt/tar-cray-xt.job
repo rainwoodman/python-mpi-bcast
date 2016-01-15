@@ -1,0 +1,19 @@
+#PBS -j eo
+#PBS -N xt-tar-sys
+#PBS -l walltime=00:10:00
+#PBS -q debug
+#PBS -l nodes=1:ppn=32
+
+cd $PBS_O_WORKDIR
+
+module load bwpy
+module load bwpy-mpi
+
+aprun -n 1 strace python-mpi -c 'from mpi4py import MPI' &> xt.trace
+
+grep "= 3$" xt.trace | grep so | sed -s 's;open(";;' | sed -s 's;".*;;' > filelist
+
+rm -rf lib
+mkdir -p lib
+aprun -n 1 cp `cat filelist` lib/
+tar -czvf cray-xt.tar.gz lib/

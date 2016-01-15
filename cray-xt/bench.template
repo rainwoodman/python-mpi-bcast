@@ -1,0 +1,18 @@
+#PBS -l nodes=@N@:ppn=32
+#PBS -j eo
+#PBS -o bench-@N@.out
+#PBS -l walltime=00:10:00
+
+set -x
+export OMP_NUM_THREADS=1
+export ATP_ENABLED=0
+
+source ~/source/python-mpi-bcast/activate.sh /dev/shm/local "aprun -n $((@N@ * 32))"
+
+# send the anaconda packages
+time bcast -t \
+~/source/python-mpi-bcast/cray-xt/cray-xt.tar.gz \
+~/anaconda2/anaconda-2.7.tar.gz
+
+cd /dev/shm
+time aprun -n $((@N@ * 32)) python-mpi -c 'import scipy;from mpi4py import MPI;'
