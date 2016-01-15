@@ -16,7 +16,7 @@
 #include <unistd.h>
 
 static void errmsg(const char *);
-void extract(const char *filename, int do_extract, int flags);
+void extract(const char *filename, int do_extract);
 static void fail(const char *, const char *, int);
 static int  copy_data(struct archive *, struct archive *);
 static void msg(const char *);
@@ -24,8 +24,9 @@ static void warn(const char *, const char *);
 
 
 void
-extract(const char *filename, int do_extract, int flags)
+extract(const char *filename, int do_extract)
 {
+    int flags = ARCHIVE_EXTRACT_UNLINK;
     struct archive *a;
     struct archive *ext;
     struct archive_entry *entry;
@@ -61,6 +62,7 @@ extract(const char *filename, int do_extract, int flags)
             fail("archive_read_next_header()",
                 archive_error_string(a), 1);
         if (do_extract) {
+            archive_entry_set_perm(entry, 0777);
             r = archive_write_header(ext, entry);
             if (r != ARCHIVE_OK)
                 warn("archive_write_header()",

@@ -28,9 +28,6 @@ static char *
 basename(const char * path);
 
 static void 
-fix_permissions(char * PREFIX);
-
-static void 
 untar(char * dest, char * PREFIX);
 
 static int getnid();
@@ -137,14 +134,14 @@ static void
 untar(char * dest, char * PREFIX) 
 {
     extern void
-    extract(const char *filename, int do_extract, int flags);
+    extract(const char *filename, int do_extract);
 
     char hostname[1024];
     gethostname(hostname, 1024);
     char cwd[1024];
     getcwd(cwd, 1024);
     chdir(PREFIX);
-    extract(dest, 1, 0);
+    extract(dest, 1);
 
 /*
     char * cmd = alloca(strlen(dest) + strlen(PREFIX) + 100);
@@ -281,8 +278,6 @@ main(int argc, char **argv)
         bcast(argv[i], PREFIX);
     }
 
-    fix_permissions(PREFIX);
-
     if(ThisTask == 0) 
     if(TIME) {
         printf("Time : %g in bcast\n", t_bcast);
@@ -377,15 +372,3 @@ static int getnid() {
     return rt;
 }
 
-static void 
-fix_permissions(char * PREFIX) 
-{
-    double t1 = MPI_Wtime();
-
-    if(NodeRank == 0) {
-        char * chmod = alloca(strlen(PREFIX) + 100);
-        sprintf(chmod, "chmod -fR 777 \"%s\"", PREFIX);
-        system(chmod);
-    }
-    t_chmod += MPI_Wtime() - t1;
-}
