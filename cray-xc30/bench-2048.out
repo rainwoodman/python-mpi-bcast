@@ -1,0 +1,45 @@
++ export OMP_NUM_THREADS=1
++ OMP_NUM_THREADS=1
++ export ATP_ENABLED=0
++ ATP_ENABLED=0
++ source /project/projectdirs/m779/python-mpi/activate.sh /dev/shm/local 'srun -N 2048'
+++ APRUN='srun -N 2048'
+++ BCASTROOT=/dev/shm/local
+++ [[ -n 3.2.51(1)-release ]]
+++ _SCRIPT_LOCATION=/project/projectdirs/m779/python-mpi/activate.sh
++++ dirname /project/projectdirs/m779/python-mpi/activate.sh
+++ DIRNAME=/project/projectdirs/m779/python-mpi
+++ trap finish EXIT
+++ trap finish TERM
+++ trap finish KILL
+++ export PYTHONPATH=/dev/shm/local/lib/python
+++ PYTHONPATH=/dev/shm/local/lib/python
+++ export PYTHONHOME=/dev/shm/local
+++ PYTHONHOME=/dev/shm/local
+++ export PYTHONUSERBASE=/dev/shm/local
+++ PYTHONUSERBASE=/dev/shm/local
+++ OLD_LD_LIBRARY_PATH=/opt/gcc/5.2.0/snos/lib64:/usr/syscom/nsg/lib
+++ export LD_LIBRARY_PATH=/dev/shm/local/lib:/opt/gcc/5.2.0/snos/lib64:/usr/syscom/nsg/lib
+++ LD_LIBRARY_PATH=/dev/shm/local/lib:/opt/gcc/5.2.0/snos/lib64:/usr/syscom/nsg/lib
+++ export PATH=/dev/shm/local/bin:/project/projectdirs/m779/yfeng1/local-edison/bin:/project/projectdirs/m779/yfeng1/envs/python-2.7-edison/bin:/usr/common/usg/python/2.7-anaconda/lib/python2.7/site-packages/mpi4py/bin:/opt/cray/alps/5.2.3-2.0502.9295.14.14.ari/sbin:/opt/cray/alps/5.2.3-2.0502.9295.14.14.ari/bin:/opt/cray/dvs/2.5_0.9.0-1.0502.1958.2.55.ari/bin:/opt/cray/xpmem/0.1-2.0502.57015.1.15.ari/bin:/opt/cray/pmi/5.0.10-1.0000.11050.0.0.ari/bin:/opt/cray/ugni/6.0-1.0502.10245.9.9.ari/bin:/opt/cray/udreg/2.3.2-1.0502.9889.2.20.ari/bin:/opt/gcc/5.2.0/bin:/usr/common/usg/bin:/usr/common/mss/bin:/usr/common/nsg/bin:/opt/slurm/default/bin:/opt/cray/mpt/7.3.0/gni/bin:/opt/cray/craype/2.5.0/bin:/opt/cray/switch/1.0-1.0502.57058.1.58.ari/bin:/opt/cray/eslogin/eswrap/1.1.0-1.020200.1130.0/bin:/usr/syscom/nsg/sbin:/usr/syscom/nsg/bin:/opt/modules/3.2.10.3/bin:/usr/local/bin:/usr/bin:/bin:/usr/bin/X11:/usr/X11R6/bin:/usr/games:/usr/lib/mit/bin:/usr/lib/mit/sbin:/usr/lib/qt3/bin:/opt/cray/bin
+++ PATH=/dev/shm/local/bin:/project/projectdirs/m779/yfeng1/local-edison/bin:/project/projectdirs/m779/yfeng1/envs/python-2.7-edison/bin:/usr/common/usg/python/2.7-anaconda/lib/python2.7/site-packages/mpi4py/bin:/opt/cray/alps/5.2.3-2.0502.9295.14.14.ari/sbin:/opt/cray/alps/5.2.3-2.0502.9295.14.14.ari/bin:/opt/cray/dvs/2.5_0.9.0-1.0502.1958.2.55.ari/bin:/opt/cray/xpmem/0.1-2.0502.57015.1.15.ari/bin:/opt/cray/pmi/5.0.10-1.0000.11050.0.0.ari/bin:/opt/cray/ugni/6.0-1.0502.10245.9.9.ari/bin:/opt/cray/udreg/2.3.2-1.0502.9889.2.20.ari/bin:/opt/gcc/5.2.0/bin:/usr/common/usg/bin:/usr/common/mss/bin:/usr/common/nsg/bin:/opt/slurm/default/bin:/opt/cray/mpt/7.3.0/gni/bin:/opt/cray/craype/2.5.0/bin:/opt/cray/switch/1.0-1.0502.57058.1.58.ari/bin:/opt/cray/eslogin/eswrap/1.1.0-1.020200.1130.0/bin:/usr/syscom/nsg/sbin:/usr/syscom/nsg/bin:/opt/modules/3.2.10.3/bin:/usr/local/bin:/usr/bin:/bin:/usr/bin/X11:/usr/X11R6/bin:/usr/games:/usr/lib/mit/bin:/usr/lib/mit/sbin:/usr/lib/qt3/bin:/opt/cray/bin
+++ [[ -n 3.2.51(1)-release ]]
+++ hash -r
++ bcast -t /project/projectdirs/m779/python-mpi/cray-xc30/cray-xc30.tar.gz /project/projectdirs/m779/yfeng1/python-2.7-edison.tar.gz
++ LD_LIBRARY_PATH=
++ srun -N 2048 /project/projectdirs/m779/python-mpi/bcast -p /dev/shm/local -t /project/projectdirs/m779/python-mpi/cray-xc30/cray-xc30.tar.gz /project/projectdirs/m779/yfeng1/python-2.7-edison.tar.gz
+Time : 3.43116 in bcast
+Time : 31.4195 in tar
+Time : 6.36747 in chmod
+
+real	1m10.367s
+user	0m0.640s
+sys	0m0.524s
++ cd /dev/shm/local
++ srun -N 2048 --ntasks-per-node=24 python-mpi -c 'import scipy;from mpi4py import MPI;'
+
+real	1m55.430s
+user	0m7.148s
+sys	0m1.908s
++ finish
++ srun -N 2048 rm -rf /dev/shm/local
