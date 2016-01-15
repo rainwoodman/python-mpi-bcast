@@ -1,0 +1,66 @@
+----------------------------------------
+Begin Torque Prologue on nid25339
+at Thu Jan 14 20:29:18 CST 2016
+Job Id:			3415204.nid11293
+Username:		yfeng1
+Group:			PRAC_jp6
+Job name:		bench-1.job
+Requested resources:	neednodes=1:ppn=32,nodes=1:ppn=32,walltime=00:10:00
+Queue:			normal
+Account:		jp6
+End Torque Prologue:  0.027 elapsed
+----------------------------------------
+
+
++ export OMP_NUM_THREADS=1
++ OMP_NUM_THREADS=1
++ export ATP_ENABLED=0
++ ATP_ENABLED=0
++ export PATH=/u/sciteam/yfeng1/anaconda2/bin:/u/sciteam/yfeng1/anaconda2/bin:/sw/xe/darshan/2.3.0/darshan-2.3.0_cle52/bin:/sw/xe/altd/bin:/sw/admin/scripts:/sw/user/scripts:/opt/moab/8.1/bin:/opt/moab/8.1/sbin:/opt/torque/5.0.2-bwpatch/sbin:/opt/torque/5.0.2-bwpatch/bin:/opt/cray/mpt/7.2.0/gni/bin:/opt/cray/rca/1.0.0-2.0502.53711.3.125.gem/bin:/opt/cray/pmi/5.0.6-1.0000.10439.140.3.gem/bin:/opt/cray/cce/8.3.10/cray-binutils/x86_64-unknown-linux-gnu/bin:/opt/cray/cce/8.3.10/craylibs/x86-64/bin:/opt/cray/cce/8.3.10/cftn/bin:/opt/cray/cce/8.3.10/CC/bin:/opt/cray/craype/2.3.0/bin:/opt/cray/llm/default/bin:/opt/cray/llm/default/etc:/opt/cray/xpmem/0.1-2.0502.55507.3.2.gem/bin:/opt/cray/dmapp/7.0.1-1.0502.9501.5.211.gem/bin:/opt/cray/ugni/5.0-1.0502.9685.4.24.gem/bin:/opt/cray/udreg/2.3.2-1.0502.9275.1.25.gem/bin:/opt/cray/lustre-cray_gem_s/2.5_3.0.101_0.31.1_1.0502.8394.15.1-1.0502.19859.16.1/sbin:/opt/cray/lustre-cray_gem_s/2.5_3.0.101_0.31.1_1.0502.8394.15.1-1.0502.19859.16.1/bin:/opt/cray/alps/5.2.1-2.0502.9710.28.1.gem/sbin:/opt/cray/alps/5.2.1-2.0502.9710.28.1.gem/bin:/opt/cray/sdb/1.0-1.0502.55976.5.27.gem/bin:/opt/cray/nodestat/2.2-1.0502.53712.3.109.gem/bin:/opt/modules/3.2.10.3/bin:/u/sciteam/yfeng1/bin:/usr/local/bin:/usr/bin:/bin:/usr/bin/X11:/usr/X11R6/bin:/usr/games:/usr/lib/mit/bin:/usr/lib/mit/sbin:.:/usr/lib/qt3/bin:/opt/cray/bin
++ PATH=/u/sciteam/yfeng1/anaconda2/bin:/u/sciteam/yfeng1/anaconda2/bin:/sw/xe/darshan/2.3.0/darshan-2.3.0_cle52/bin:/sw/xe/altd/bin:/sw/admin/scripts:/sw/user/scripts:/opt/moab/8.1/bin:/opt/moab/8.1/sbin:/opt/torque/5.0.2-bwpatch/sbin:/opt/torque/5.0.2-bwpatch/bin:/opt/cray/mpt/7.2.0/gni/bin:/opt/cray/rca/1.0.0-2.0502.53711.3.125.gem/bin:/opt/cray/pmi/5.0.6-1.0000.10439.140.3.gem/bin:/opt/cray/cce/8.3.10/cray-binutils/x86_64-unknown-linux-gnu/bin:/opt/cray/cce/8.3.10/craylibs/x86-64/bin:/opt/cray/cce/8.3.10/cftn/bin:/opt/cray/cce/8.3.10/CC/bin:/opt/cray/craype/2.3.0/bin:/opt/cray/llm/default/bin:/opt/cray/llm/default/etc:/opt/cray/xpmem/0.1-2.0502.55507.3.2.gem/bin:/opt/cray/dmapp/7.0.1-1.0502.9501.5.211.gem/bin:/opt/cray/ugni/5.0-1.0502.9685.4.24.gem/bin:/opt/cray/udreg/2.3.2-1.0502.9275.1.25.gem/bin:/opt/cray/lustre-cray_gem_s/2.5_3.0.101_0.31.1_1.0502.8394.15.1-1.0502.19859.16.1/sbin:/opt/cray/lustre-cray_gem_s/2.5_3.0.101_0.31.1_1.0502.8394.15.1-1.0502.19859.16.1/bin:/opt/cray/alps/5.2.1-2.0502.9710.28.1.gem/sbin:/opt/cray/alps/5.2.1-2.0502.9710.28.1.gem/bin:/opt/cray/sdb/1.0-1.0502.55976.5.27.gem/bin:/opt/cray/nodestat/2.2-1.0502.53712.3.109.gem/bin:/opt/modules/3.2.10.3/bin:/u/sciteam/yfeng1/bin:/usr/local/bin:/usr/bin:/bin:/usr/bin/X11:/usr/X11R6/bin:/usr/games:/usr/lib/mit/bin:/usr/lib/mit/sbin:.:/usr/lib/qt3/bin:/opt/cray/bin
++ export LD_LIBRARY_PATH=/u/sciteam/yfeng1/anaconda2/lib:/u/sciteam/yfeng1/anaconda2/lib:/sw/xe/darshan/2.3.0/darshan-2.3.0_cle52/lib
++ LD_LIBRARY_PATH=/u/sciteam/yfeng1/anaconda2/lib:/u/sciteam/yfeng1/anaconda2/lib:/sw/xe/darshan/2.3.0/darshan-2.3.0_cle52/lib
++ source /u/sciteam/yfeng1/source/python-mpi-bcast/activate.sh /dev/shm/local 'aprun -n 32'
+++ APRUN='aprun -n 32'
+++ BCASTROOT=/dev/shm/local
+++ [[ -n 3.2.51(1)-release ]]
+++ _SCRIPT_LOCATION=/u/sciteam/yfeng1/source/python-mpi-bcast/activate.sh
++++ dirname /u/sciteam/yfeng1/source/python-mpi-bcast/activate.sh
+++ DIRNAME=/u/sciteam/yfeng1/source/python-mpi-bcast
+++ trap finish EXIT
+++ trap finish TERM
+++ trap finish KILL
+++ export PYTHONPATH=/dev/shm/local/lib/python
+++ PYTHONPATH=/dev/shm/local/lib/python
+++ export PYTHONHOME=/dev/shm/local
+++ PYTHONHOME=/dev/shm/local
+++ export PYTHONUSERBASE=/dev/shm/local
+++ PYTHONUSERBASE=/dev/shm/local
+++ OLD_LD_LIBRARY_PATH=/u/sciteam/yfeng1/anaconda2/lib:/u/sciteam/yfeng1/anaconda2/lib:/sw/xe/darshan/2.3.0/darshan-2.3.0_cle52/lib
+++ export LD_LIBRARY_PATH=/dev/shm/local/lib:/u/sciteam/yfeng1/anaconda2/lib:/u/sciteam/yfeng1/anaconda2/lib:/sw/xe/darshan/2.3.0/darshan-2.3.0_cle52/lib
+++ LD_LIBRARY_PATH=/dev/shm/local/lib:/u/sciteam/yfeng1/anaconda2/lib:/u/sciteam/yfeng1/anaconda2/lib:/sw/xe/darshan/2.3.0/darshan-2.3.0_cle52/lib
+++ export PATH=/dev/shm/local/bin:/u/sciteam/yfeng1/anaconda2/bin:/u/sciteam/yfeng1/anaconda2/bin:/sw/xe/darshan/2.3.0/darshan-2.3.0_cle52/bin:/sw/xe/altd/bin:/sw/admin/scripts:/sw/user/scripts:/opt/moab/8.1/bin:/opt/moab/8.1/sbin:/opt/torque/5.0.2-bwpatch/sbin:/opt/torque/5.0.2-bwpatch/bin:/opt/cray/mpt/7.2.0/gni/bin:/opt/cray/rca/1.0.0-2.0502.53711.3.125.gem/bin:/opt/cray/pmi/5.0.6-1.0000.10439.140.3.gem/bin:/opt/cray/cce/8.3.10/cray-binutils/x86_64-unknown-linux-gnu/bin:/opt/cray/cce/8.3.10/craylibs/x86-64/bin:/opt/cray/cce/8.3.10/cftn/bin:/opt/cray/cce/8.3.10/CC/bin:/opt/cray/craype/2.3.0/bin:/opt/cray/llm/default/bin:/opt/cray/llm/default/etc:/opt/cray/xpmem/0.1-2.0502.55507.3.2.gem/bin:/opt/cray/dmapp/7.0.1-1.0502.9501.5.211.gem/bin:/opt/cray/ugni/5.0-1.0502.9685.4.24.gem/bin:/opt/cray/udreg/2.3.2-1.0502.9275.1.25.gem/bin:/opt/cray/lustre-cray_gem_s/2.5_3.0.101_0.31.1_1.0502.8394.15.1-1.0502.19859.16.1/sbin:/opt/cray/lustre-cray_gem_s/2.5_3.0.101_0.31.1_1.0502.8394.15.1-1.0502.19859.16.1/bin:/opt/cray/alps/5.2.1-2.0502.9710.28.1.gem/sbin:/opt/cray/alps/5.2.1-2.0502.9710.28.1.gem/bin:/opt/cray/sdb/1.0-1.0502.55976.5.27.gem/bin:/opt/cray/nodestat/2.2-1.0502.53712.3.109.gem/bin:/opt/modules/3.2.10.3/bin:/u/sciteam/yfeng1/bin:/usr/local/bin:/usr/bin:/bin:/usr/bin/X11:/usr/X11R6/bin:/usr/games:/usr/lib/mit/bin:/usr/lib/mit/sbin:.:/usr/lib/qt3/bin:/opt/cray/bin
+++ PATH=/dev/shm/local/bin:/u/sciteam/yfeng1/anaconda2/bin:/u/sciteam/yfeng1/anaconda2/bin:/sw/xe/darshan/2.3.0/darshan-2.3.0_cle52/bin:/sw/xe/altd/bin:/sw/admin/scripts:/sw/user/scripts:/opt/moab/8.1/bin:/opt/moab/8.1/sbin:/opt/torque/5.0.2-bwpatch/sbin:/opt/torque/5.0.2-bwpatch/bin:/opt/cray/mpt/7.2.0/gni/bin:/opt/cray/rca/1.0.0-2.0502.53711.3.125.gem/bin:/opt/cray/pmi/5.0.6-1.0000.10439.140.3.gem/bin:/opt/cray/cce/8.3.10/cray-binutils/x86_64-unknown-linux-gnu/bin:/opt/cray/cce/8.3.10/craylibs/x86-64/bin:/opt/cray/cce/8.3.10/cftn/bin:/opt/cray/cce/8.3.10/CC/bin:/opt/cray/craype/2.3.0/bin:/opt/cray/llm/default/bin:/opt/cray/llm/default/etc:/opt/cray/xpmem/0.1-2.0502.55507.3.2.gem/bin:/opt/cray/dmapp/7.0.1-1.0502.9501.5.211.gem/bin:/opt/cray/ugni/5.0-1.0502.9685.4.24.gem/bin:/opt/cray/udreg/2.3.2-1.0502.9275.1.25.gem/bin:/opt/cray/lustre-cray_gem_s/2.5_3.0.101_0.31.1_1.0502.8394.15.1-1.0502.19859.16.1/sbin:/opt/cray/lustre-cray_gem_s/2.5_3.0.101_0.31.1_1.0502.8394.15.1-1.0502.19859.16.1/bin:/opt/cray/alps/5.2.1-2.0502.9710.28.1.gem/sbin:/opt/cray/alps/5.2.1-2.0502.9710.28.1.gem/bin:/opt/cray/sdb/1.0-1.0502.55976.5.27.gem/bin:/opt/cray/nodestat/2.2-1.0502.53712.3.109.gem/bin:/opt/modules/3.2.10.3/bin:/u/sciteam/yfeng1/bin:/usr/local/bin:/usr/bin:/bin:/usr/bin/X11:/usr/X11R6/bin:/usr/games:/usr/lib/mit/bin:/usr/lib/mit/sbin:.:/usr/lib/qt3/bin:/opt/cray/bin
+++ [[ -n 3.2.51(1)-release ]]
+++ hash -r
++ bcast -t /u/sciteam/yfeng1/source/python-mpi-bcast/cray-xt/cray-xt.tar.gz /u/sciteam/yfeng1/anaconda2/anaconda-2.7.tar.gz
++ LD_LIBRARY_PATH=
++ aprun -n 32 /u/sciteam/yfeng1/source/python-mpi-bcast/bcast -p /dev/shm/local -t /u/sciteam/yfeng1/source/python-mpi-bcast/cray-xt/cray-xt.tar.gz /u/sciteam/yfeng1/anaconda2/anaconda-2.7.tar.gz
+Time : 1.03708 in bcast
+Time : 7.72704 in tar
+Time : 8.76577 in total 
+Application 31661310 resources: utime ~276s, stime ~52s, Rss ~261064, inblocks ~1058339, outblocks ~2368031
+
+real	0m14.524s
+user	0m0.444s
+sys	0m0.124s
++ cd /dev/shm
++ aprun -n 32 python-mpi -c 'import scipy;from mpi4py import MPI;'
+Application 31661344 resources: utime ~28s, stime ~49s, Rss ~27576, inblocks ~196586, outblocks ~135062
+
+real	0m6.863s
+user	0m0.064s
+sys	0m0.080s
++ finish
++ aprun -n 32 rm -rf /dev/shm/local
+Application 31661346 resources: utime ~0s, stime ~48s, Rss ~21480, inblocks ~156, outblocks ~109
