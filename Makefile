@@ -22,5 +22,8 @@ all: bcast
 python-mpi: python-mpi.c 
 	$(CCDYNAMIC) -g -O0 -o python-mpi python-mpi.c `$(PYTHONCONFIG) --include --libs`
 
-bcast : bcast.c
-	$(CC) -g -O0 -o bcast bcast.c
+bcast : bcast.c tar.c
+	$(CC) -g -O0 -o bcast bcast.c tar.c -larchive
+
+clean:
+	rm python-mpi bcast tar

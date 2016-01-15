@@ -30,6 +30,9 @@ basename(const char * path);
 static void 
 fix_permissions(char * PREFIX);
 
+static void 
+untar(char * dest, char * PREFIX);
+
 static int getnid();
 
 static int ThisTask = 0;
@@ -114,24 +117,7 @@ static void bcast(char * src, char * PREFIX) {
     t_bcast += MPI_Wtime() - t1;
     
     t1 = MPI_Wtime();
-    char * untar = alloca(strlen(dest) + strlen(PREFIX) + 100);
-    if(!strcmp(dest + strlen(dest) - 3, "bz2")) {
-        sprintf(untar, "tar --overwrite -xjf \"%s\" -C \"%s\"", dest, PREFIX);
-    } else
-    if(!strcmp(dest + strlen(dest) - 3, "tar")) {
-        sprintf(untar, "tar --overwrite -xf \"%s\" -C \"%s\"", dest, PREFIX);
-    } else 
-    if(!strcmp(dest + strlen(dest) - 2, "gz")) {
-        sprintf(untar, "tar --overwrite -xzf \"%s\" -C \"%s\"", dest, PREFIX);
-    } else {
-        sprintf(untar, "cp \"%s\" \"%s\"", dest, PREFIX);
-    }
-
-    if(VERBOSE) {
-        printf("%s: Running command: %s\n", hostname, untar);
-        fflush(stdout);
-    }
-    system(untar);
+    untar(dest, PREFIX);
     unlink(dest);
 
     MPI_Barrier(NODE_LEADERS);
@@ -145,6 +131,41 @@ static void bcast(char * src, char * PREFIX) {
             fflush(stdout);
         }
     }
+}
+
+static void 
+untar(char * dest, char * PREFIX) 
+{
+    extern void
+    extract(const char *filename, int do_extract, int flags);
+
+    char hostname[1024];
+    gethostname(hostname, 1024);
+    char cwd[1024];
+    getcwd(cwd, 1024);
+    chdir(PREFIX);
+    extract(dest, 1, 0);
+
+/*
+    char * cmd = alloca(strlen(dest) + strlen(PREFIX) + 100);
+    if(!strcmp(dest + strlen(dest) - 3, "bz2")) {
+        sprintf(cmd, "tar --overwrite -xjf \"%s\" -C \"%s\"", dest, PREFIX);
+    } else
+    if(!strcmp(dest + strlen(dest) - 3, "tar")) {
+        sprintf(cmd, "tar --overwrite -xf \"%s\" -C \"%s\"", dest, PREFIX);
+    } else 
+    if(!strcmp(dest + strlen(dest) - 2, "gz")) {
+        sprintf(cmd, "tar --overwrite -xzf \"%s\" -C \"%s\"", dest, PREFIX);
+    } else {
+        sprintf(cmd, "cp \"%s\" \"%s\"", dest, PREFIX);
+    }
+
+    if(VERBOSE) {
+        printf("%s: Running command: %s\n", hostname, cmd);
+        fflush(stdout);
+    }
+    system(cmd);
+*/
 }
 
 static void 
