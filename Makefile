@@ -3,8 +3,8 @@ CCDYNAMIC=$(CC) -dynamic
 LDSHARED=$(CC) -shared
 PYTHONCONFIG=python-config
 
-# on BlueWaters
-# make CC=cc LDSHARED="cc -shared"
+# on BlueWaters (cray)
+# make CC='cc -static'
 
 # on COMA (CMU)
 # make CC=mpiicc LDSHARED="mpiicc -shared"
@@ -12,8 +12,8 @@ PYTHONCONFIG=python-config
 # on Fedora 19 with openmpi
 # make CC=mpicc LDSHARED="mpicc -shared"
 
-# on Edison
-# LIBRARY_PATH=$LD_LIBRARY_PATH make CC=cc 
+# on Edison (gcc)
+# make CC='cc -static'
 
 .PHONY: build clean
 
