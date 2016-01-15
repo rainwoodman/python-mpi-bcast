@@ -19,11 +19,14 @@ We can start 12,288 ranks, each import scipy, and doing all of these in 50 secon
 The overhead of python-mpi-bcast at full machine capability is comparable to the ALPS applicationg launching
 overhead.
 
-.. image:: https://raw.githubusercontent.com/rainwoodman/python-mpi-bcast/master/cray-xc30/cray-xc30-startup-time.png
-    :width: 40%
+====================    =====================
+Cray XC30 Edison        Cray XT BlueWaters
+--------------------    ---------------------
+|xc30|                   |xt|
+====================    =====================
 
-.. image:: https://raw.githubusercontent.com/rainwoodman/python-mpi-bcast/master/cray-xt/cray-xt-startup-time.png
-    :width: 40%
+.. |xc30| image:: https://raw.githubusercontent.com/rainwoodman/python-mpi-bcast/master/cray-xc30/cray-xc30-startup-time.png   
+.. |xt|   image:: https://raw.githubusercontent.com/rainwoodman/python-mpi-bcast/master/cray-xt/cray-xt-startup-time.png
 
 Why is Python slow on a supercomputer?
 ---------------------------------------
