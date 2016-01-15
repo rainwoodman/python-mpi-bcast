@@ -215,6 +215,7 @@ main(int argc, char **argv)
     umask(0);
 
     MPI_Init(&argc, &argv);
+    double t0 = 0;
 
     int nid = getnid();
     initialize(nid);
@@ -282,7 +283,7 @@ main(int argc, char **argv)
     if(TIME) {
         printf("Time : %g in bcast\n", t_bcast);
         printf("Time : %g in tar\n", t_tar);
-        printf("Time : %g in chmod\n", t_chmod);
+        printf("Time : %g in total \n", MPI_Wtime() - t0);
     }
 quit:
     MPI_Barrier(MPI_COMM_WORLD);
