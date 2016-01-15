@@ -156,7 +156,7 @@ process_file(char * filename, char * PREFIX)
         FILE * fp = fopen(filename, "r");
         if(fp == NULL) {
             fprintf(stderr, "failed to open package list %s.\n", filename);
-            MPI_Abort(0, MPI_COMM_WORLD);
+            MPI_Abort(MPI_COMM_WORLD, 1);
         }
         while(!feof(fp)) {
             fgets(path, 1020, fp);
