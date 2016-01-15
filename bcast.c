@@ -136,12 +136,11 @@ untar(char * dest, char * PREFIX)
     extern void
     extract(const char *filename, int do_extract);
 
-    char hostname[1024];
-    gethostname(hostname, 1024);
     char cwd[1024];
     getcwd(cwd, 1024);
     chdir(PREFIX);
     extract(dest, 1);
+    chdir(cwd);
 
 /*
     char * cmd = alloca(strlen(dest) + strlen(PREFIX) + 100);
@@ -158,6 +157,8 @@ untar(char * dest, char * PREFIX)
     }
 
     if(VERBOSE) {
+        char hostname[1024];
+        gethostname(hostname, 1024);
         printf("%s: Running command: %s\n", hostname, cmd);
         fflush(stdout);
     }
@@ -215,7 +216,7 @@ main(int argc, char **argv)
     umask(0);
 
     MPI_Init(&argc, &argv);
-    double t0 = 0;
+    double t0 = MPI_Wtime();
 
     int nid = getnid();
     initialize(nid);
