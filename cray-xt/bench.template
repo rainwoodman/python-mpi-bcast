@@ -7,6 +7,8 @@ set -x
 export OMP_NUM_THREADS=1
 export ATP_ENABLED=0
 
+export PATH=~/anaconda2/bin:$PATH
+export LD_LIBRARY_PATH=~/anaconda2/lib:$LD_LIBRARY_PATH
 source ~/source/python-mpi-bcast/activate.sh /dev/shm/local "aprun -n $((@N@ * 32))"
 
 # send the anaconda packages
