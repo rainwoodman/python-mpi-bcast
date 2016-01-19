@@ -46,7 +46,6 @@ End Torque Prologue:  0.035 elapsed
 + bcast -t /u/sciteam/yfeng1/source/python-mpi-bcast/cray-xt/cray-xt.tar.gz /u/sciteam/yfeng1/anaconda2/anaconda-2.7.tar.gz
 + LD_LIBRARY_PATH=
 + aprun -n 262144 /u/sciteam/yfeng1/source/python-mpi-bcast/bcast -p /dev/shm/local -t /u/sciteam/yfeng1/source/python-mpi-bcast/cray-xt/cray-xt.tar.gz /u/sciteam/yfeng1/anaconda2/anaconda-2.7.tar.gz
-Time : 5.27238 in init
 Time : 5.58864 in bcast
 Time : 8.57061 in tar
 Time : 14.1837 in total 
