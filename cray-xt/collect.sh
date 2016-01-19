@@ -12,7 +12,7 @@ NR == 61 {
 }
 EOF
 echo "# N bcast tar bcasttot0 bcasttot launch"
-for i in 1 2 4 8 16 32 64 128 256 512 1024 2048 4096; do
+for i in 1 2 4 8 16 32 64 128 256 512 1024 2048 4096 8192; do
     echo -n "$i "
     awk -f process.awk bench-$i.out
 done
