@@ -1,11 +1,12 @@
 if [ "x$1" == "x-h" ]; then
-    echo $0 path
+    echo "$0 path subdirs [ ... ]"
     exit
 fi
-
+DIR=$1
+shift
 OUTPUT=`mktemp --suffix=.tar.gz`
 (
-cd `dirname $1`
-tar -cf - `basename $1` | gzip -9 - > $OUTPUT
+cd $DIR
+tar -cf - $* | gzip -9 - > $OUTPUT
 )
 echo $OUTPUT

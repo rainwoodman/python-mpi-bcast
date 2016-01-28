@@ -1,3 +1,4 @@
+#! /bin/bash
 if [ "x$1" == "x-h" ]; then
     echo $0 filename.tar.gz packages
     exit
