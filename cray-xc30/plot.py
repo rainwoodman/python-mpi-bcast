@@ -4,7 +4,7 @@ import numpy
 
 nodes, bcast, tar, chmod, bcasttot, launch = numpy.loadtxt('./collect.txt', unpack=True)
 
-f = Figure(figsize=(5, 5))
+f = Figure(figsize=(4, 4))
 ax = f.add_subplot(111)
 
 ax.plot(nodes * 24, launch, 's ', color='k', label='import scipy')
@@ -17,9 +17,11 @@ ax.set_xlabel('Number of Ranks')
 ax.set_ylabel('Wall time [sec]')
 ax.set_xscale('log')
 ax.set_yscale('log')
-ax.grid()
-ax.legend(loc='lower right', frameon=True, ncol=2, fontsize='small')
+ax.set_ylim(3e-1, 2e3)
+#ax.grid()
+ax.legend(loc='upper left', frameon=False, ncol=1, fontsize='small')
 canvas = FigureCanvasAgg(f)
 f.tight_layout()
 f.savefig('cray-xc30-startup-time.png', dpi=72)
-f.savefig('cray-xc30-startup-time-highres.png', dpi=200)
+f.savefig('cray-xc30-startup-time-hires.png', dpi=200)
+f.savefig('cray-xc30-startup-time-hires.pdf', dpi=200)
