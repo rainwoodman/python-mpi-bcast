@@ -11,33 +11,47 @@ else
     echo "Only bash and zsh are supported"
     return 1
 fi
+
 DIRNAME=`dirname ${_SCRIPT_LOCATION}`
 
-function finish {
-    $APRUN rm -rf $BCASTROOT
+function bundle-pip {
+    $DIRNAME/tar-pip.sh $*
 }
 
-trap finish EXIT
-trap finish TERM
-trap finish KILL
 
-export PYTHONPATH=$BCASTROOT/lib/python
-export PYTHONHOME=$BCASTROOT
-export PYTHONUSERBASE=$BCASTROOT
-OLD_LD_LIBRARY_PATH=$LD_LIBRARY_PATH
-export LD_LIBRARY_PATH=$BCASTROOT/lib:$LD_LIBRARY_PATH
-export PATH=$BCASTROOT/bin:$PATH
+if [[ -n $BCASTROOT ]]; then
+    function finish {
+        $APRUN rm -rf $BCASTROOT
+    }
 
-function bcast {
-    LD_LIBRARY_PATH= $APRUN $DIRNAME/bcast -p $BCASTROOT $* || return 1
-}
+    trap finish EXIT
+    trap finish TERM
+    trap finish KILL
 
-if [[ -n $BASH_VERSION ]]; then
-    hash -r
-elif [[ -n $ZSH_VERSION ]]; then
-    rehash
-else
-    echo "Only bash and zsh are supported"
-    return 1
+
+    export PYTHONPATH=$BCASTROOT/lib/python
+    export PYTHONHOME=$BCASTROOT
+    export PYTHONUSERBASE=$BCASTROOT
+    export LD_LIBRARY_PATH=$BCASTROOT/lib:$LD_LIBRARY_PATH
+    export PATH=$BCASTROOT/bin:$PATH
+
+    function bcast {
+        $APRUN $DIRNAME/bcast -p $BCASTROOT $* || return 1
+    }
+
+    function mirror {
+        local TMPFILE=`$DIRNAME/tar-dir.sh $*`
+        bcast $TMPFILE
+        rm $TMPFILE
+    }
+
+    if [[ -n $BASH_VERSION ]]; then
+        hash -r
+    elif [[ -n $ZSH_VERSION ]]; then
+        rehash
+    else
+        echo "Only bash and zsh are supported"
+        return 1
+    fi
 fi
 

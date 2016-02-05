@@ -27,9 +27,4 @@ function __init__ {
            $ANACONDA/fitsio.tar.gz
 }
 
-function mirror {
-    local TMPFILE=`bash /project/projectdirs/m779/python-mpi/tar-dir.sh $*`
-    bcast $TMPFILE
-    rm $TMPFILE
-}
 __init__ $*
