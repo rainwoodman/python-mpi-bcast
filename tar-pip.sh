@@ -1,7 +1,7 @@
 #! /bin/bash
-if [ "x$1" == "x-h" ]; then
-    echo $0 filename.tar.gz packages
-    exit
+if [ "x$1" == "x-h" ] || [ "x$1" == "x" ] ; then
+    echo "bundle-pip bundle-name.tar.gz [-r requirements.txt] package1 package2 ..."
+    exit 1
 fi
 
 OUTPUT=`readlink -f $1`
