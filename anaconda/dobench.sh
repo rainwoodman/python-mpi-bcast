@@ -1,3 +1,6 @@
+export PYTHONPATH=
+export PYTHONUSERBASE=/tmp
+
 PYTHON=$1
 for i in `seq 20`; do
     mkdir -p /tmp/tmpdir-$i
