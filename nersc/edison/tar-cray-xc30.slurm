@@ -11,4 +11,13 @@ grep "= 3$" xc30.trace | grep so | sed -s 's;open(";;' | sed -s 's;".*;;' > file
 rm -rf lib
 mkdir -p lib
 srun -n 1 cp `cat filelist` lib/
-tar -czvf cray-xc30.tar.gz lib/
+
+function backup {
+if [ -f $1 ]; then
+    local postfix=`stat -c %y $1 | cut -d ' ' --output-delimiter='_' -f1,2`
+    mv $1 $1-$postfix
+fi
+}
+
+backup system-libraries.tar.gz
+tar -czvf system-libraries.tar.gz lib/
