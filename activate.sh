@@ -40,7 +40,14 @@ if [[ -n $BCASTROOT ]]; then
     }
 
     function mirror {
-        local TMPFILE=`$DIRNAME/tar-dir.sh $*`
+        # BASH gimmicks: local always return 0
+        # http://unix.stackexchange.com/a/146900
+        local TMPFILE
+        TMPFILE=`$DIRNAME/tar-dir.sh $*`
+        if ! [ $? -eq 0 ]; then
+            # tar-dir must have failed
+            exit 1
+        fi
         bcast $TMPFILE
         rm $TMPFILE
     }
