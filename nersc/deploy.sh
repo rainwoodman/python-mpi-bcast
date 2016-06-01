@@ -33,5 +33,5 @@ function tree {
 echo "Done. Tree of files... "
 (
 cd /usr/common/contrib/bccp/python-mpi-bcast/;
-tree nersc/$PREFIX
+tree .
 )
