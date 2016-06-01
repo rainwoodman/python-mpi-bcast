@@ -13,11 +13,15 @@ else
 fi
 
 DIRNAME=`dirname ${_SCRIPT_LOCATION}`
+DIRNAME=`readlink -f $DIRNAME`
 
 function bundle-pip {
     $DIRNAME/tar-pip.sh $*
 }
 
+function bundle-anaconda {
+    $DIRNAME/tar-anaconda.sh $*
+}
 
 if [[ -n $BCASTROOT ]]; then
     function finish {
