@@ -45,6 +45,8 @@ function __init__ {
            $ANACONDA/python.tar.gz \
            $ANACONDA/mpi4py.tar.gz \
            $ANACONDA/fitsio.tar.gz
+
+    bcast-userbase
 }
 
 __init__ $*
