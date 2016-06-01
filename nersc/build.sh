@@ -3,7 +3,7 @@
 #SBATCH -N 1
 #SBATCH -p debug
 #SBATCH -t 00:20:00
-#SBATCH -o build.log.e%j
+#SBATCH -o build.log
 
 # kill children as we die
 trap "trap - SIGTERM && kill -- -$$" SIGINT SIGTERM EXIT
@@ -11,6 +11,7 @@ trap "trap - SIGTERM && kill -- -$$" SIGINT SIGTERM EXIT
 source ../activate.sh 
 
 PREFIX=${NERSC_HOST}
+mkdir -p $PREFIX
 
 function rotate {
     if [ -f $1 ]; then
@@ -48,17 +49,18 @@ function build {
 }
 
 function system {
+    pushd $PREFIX
+
     rm -rf lib
     mkdir -p lib
 
     local filelist
-    pushd $PREFIX
 
     filelist=`srun -n 1 strace python-mpi -c 'from mpi4py import MPI' 2>&1 \
-    | grep "= 3$" | grep so | sed -s 's;open(";;' | sed -s 's;".*;;' \
+    | grep "= 3$" | grep .so | sed -s 's;open(";;' | sed -s 's;".*;;' \
     | sort | uniq | grep -v "ld.so.conf"`
 
-    srun -n 1 cp $filelist lib/
+    srun -n 1 cp -a $filelist lib/
 
     tar -czf _system-libraries.tar.gz lib/
 
@@ -66,16 +68,19 @@ function system {
     popd
 }
 
+echo "-------------------------------------------------"
 echo "Working on host $NERSC_HOST, output to $PREFIX"
 
 echo "First build the system-libraries bundle"
 
 ( system )
 
-echo "Second build the python environments"
+echo "Second build the python environments; output is messy"
 
 ( build 2.7-anaconda ) &
 ( build 3.4-anaconda ) &
 
 wait
+
+echo "-------------------------------------------------"
 
