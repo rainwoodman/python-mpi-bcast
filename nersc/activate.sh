@@ -9,13 +9,13 @@ else
     return 1
 fi
 
-DIRNAME=`dirname ${_SCRIPT_LOCATION}`
-
 if [ x"$SLURM_JOB_NUM_NODES" == x ]; then
     echo "The script is avalaible from a job script only."
     echo "Use with sbatch (for batch scripts) or salloc (for interactive)."
     return 1
 fi
+
+DIRNAME=`dirname ${_SCRIPT_LOCATION}`
 
 source $DIRNAME/../activate.sh /dev/shm/local "srun -n $SLURM_JOB_NUM_NODES"
 
@@ -24,10 +24,9 @@ function __init__ {
     if [ "x$1" == "x-t" ]; then
         SHOWTIME=-t
     fi 
-    local NERSCROOT=
-    local ANACONDA=
 
-    NERSCROOT=$DIRNAME/${NERSC_HOST}
+    local ANACONDA=
+    local NERSCROOT=$DIRNAME/${NERSC_HOST}
 
     case "$LOADEDMODULES" in
       *2.7-anaconda* )

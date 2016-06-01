@@ -1,7 +1,7 @@
 #! /bin/bash
 
-APRUN=$2
-BCASTROOT=$1
+_PYTHONMPIBCASTAPRUN=$2
+_PYTHONMPIBCASTBCASTROOT=$1
 
 if [[ -n $BASH_VERSION ]]; then
     _SCRIPT_LOCATION=${BASH_SOURCE[0]}
@@ -12,42 +12,35 @@ else
     return 1
 fi
 
-DIRNAME=`dirname ${_SCRIPT_LOCATION}`
-DIRNAME=`readlink -f $DIRNAME`
+_PYTHONMPIBCASTDIRNAME=`dirname ${_SCRIPT_LOCATION}`
+_PYTHONMPIBCASTDIRNAME=`readlink -f $_PYTHONMPIBCASTDIRNAME`
 
 function bundle-pip {
-    $DIRNAME/tar-pip.sh $*
+    $_PYTHONMPIBCASTDIRNAME/tar-pip.sh $*
 }
 
 function bundle-anaconda {
-    $DIRNAME/tar-anaconda.sh $*
+    $_PYTHONMPIBCASTDIRNAME/tar-anaconda.sh $*
 }
 
-if [[ -n $BCASTROOT ]]; then
-    function finish {
-        $APRUN rm -rf $BCASTROOT
-    }
+if [[ -n $_PYTHONMPIBCASTBCASTROOT ]]; then
+    trap "$_PYTHONMPIBCASTAPRUN rm -rf $_PYTHONMPIBCASTBCASTROOT" EXIT TERM KILL
 
-    trap finish EXIT
-    trap finish TERM
-    trap finish KILL
-
-
-    export PYTHONPATH=$BCASTROOT/lib/python
-    export PYTHONHOME=$BCASTROOT
-    export PYTHONUSERBASE=$BCASTROOT
-    export LD_LIBRARY_PATH=$BCASTROOT/lib:$LD_LIBRARY_PATH
-    export PATH=$BCASTROOT/bin:$PATH
+    export PYTHONPATH=$_PYTHONMPIBCASTBCASTROOT/lib/python
+    export PYTHONHOME=$_PYTHONMPIBCASTBCASTROOT
+    export PYTHONUSERBASE=$_PYTHONMPIBCASTBCASTROOT
+    export LD_LIBRARY_PATH=$_PYTHONMPIBCASTBCASTROOT/lib:$LD_LIBRARY_PATH
+    export PATH=$_PYTHONMPIBCASTBCASTROOT/bin:$PATH
 
     function bcast {
-        $APRUN $DIRNAME/bcast -p $BCASTROOT $* || return 1
+        $_PYTHONMPIBCASTAPRUN $_PYTHONMPIBCASTDIRNAME/bcast -p $_PYTHONMPIBCASTBCASTROOT $* || return 1
     }
 
     function mirror {
         # BASH gimmicks: local always return 0
         # http://unix.stackexchange.com/a/146900
         local TMPFILE
-        TMPFILE=`$DIRNAME/tar-dir.sh $*`
+        TMPFILE=`$_PYTHONMPIBCASTDIRNAME/tar-dir.sh $*`
         if ! [ $? -eq 0 ]; then
             # tar-dir must have failed
             exit 1
