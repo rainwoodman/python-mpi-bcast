@@ -28,7 +28,10 @@ libarchive-3.1.2/configure: libarchive-3.1.2.tar.gz
 	tar -xzvf libarchive-3.1.2.tar.gz && touch $@
 
 _inst/lib/libarchive.a: libarchive-3.1.2/configure
-	(cd libarchive-3.1.2; ./configure --prefix=/ --disable-shared --enable-static; make install DESTDIR=$(PWD)/_inst)
+	(cd libarchive-3.1.2; \
+        ./configure --prefix=/ --without-xml2 --without-nettle --without-openssl --without-lzma --without-expat \
+        --disable-shared --enable-static; \
+    make install DESTDIR=$(PWD)/_inst)
 
 clean:
 	rm python-mpi bcast tar
