@@ -8,7 +8,8 @@ DIR=$1
 shift
 OUTPUT=`mktemp --suffix=.tar.gz`
 
-pushd $DIR
+(
+cd $DIR
 
 total=`du -s $* | awk '{x += $1} END{print int(x / 1e3)}'`
 
@@ -28,7 +29,6 @@ if [ $total -gt 50 ]; then
     exit 1
 fi
 tar -cf - $* | gzip -9 - > $OUTPUT
-
-popd
+)
 
 echo $OUTPUT
