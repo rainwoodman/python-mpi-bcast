@@ -14,6 +14,7 @@ fi
 
 _PYTHONMPIBCASTDIRNAME=`dirname ${_SCRIPT_LOCATION}`
 _PYTHONMPIBCASTDIRNAME=`readlink -f $_PYTHONMPIBCASTDIRNAME`
+_PYTHONMPI_OLD_PYTHONUSERBASE=$PYTHONUSERBASE
 
 function bundle-pip {
     $_PYTHONMPIBCASTDIRNAME/tar-pip.sh $*
@@ -34,6 +35,17 @@ if [[ -n $_PYTHONMPIBCASTBCASTROOT ]]; then
 
     function bcast {
         $_PYTHONMPIBCASTAPRUN $_PYTHONMPIBCASTDIRNAME/bcast -p $_PYTHONMPIBCASTBCASTROOT $* || return 1
+    }
+
+    function bcast-userbase {
+        local USERBASE=
+     
+        if [ -n $_PYTHONMPI_OLD_PYTHONUSERBASE ]; then
+            USERBASE=`mktemp --tmpdir XXXXXXX.tar.gz`
+            bundle-anaconda $USERBASE $_PYTHONMPI_OLD_PYTHONUSERBASE
+            bcast $USERBASE
+            rm $USERBASE
+        fi
     }
 
     function mirror {
