@@ -19,7 +19,7 @@ LDSHARED=$(CC) -shared
 all: bcast
 
 bcast : bcast.c bcast-tar.c _inst/lib/libarchive.a
-	$(CC) -I_inst/include -L_inst/lib -g -O0 -o bcast bcast.c bcast-tar.c -larchive -lz -lbz2
+	$(CC) -I_inst/include -L_inst/lib -g -O0 -o bcast bcast.c bcast-tar.c -larchive -lz
 
 libarchive-3.1.2.tar.gz:
 	wget http://www.libarchive.org/downloads/libarchive-3.1.2.tar.gz
@@ -29,7 +29,7 @@ libarchive-3.1.2/configure: libarchive-3.1.2.tar.gz
 
 _inst/lib/libarchive.a: libarchive-3.1.2/configure
 	(cd libarchive-3.1.2; \
-        ./configure --prefix=/ --without-xml2 --without-nettle --without-openssl --without-lzma --without-expat \
+        ./configure --prefix=/ --without-xml2 --without-nettle --without-openssl --without-lzma --without-expat --without-bz2lib \
         --disable-shared --enable-static; \
     make install DESTDIR=$(PWD)/_inst)
 
