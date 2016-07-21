@@ -19,5 +19,6 @@ tar -cf - \
     --exclude='*.png' \
     --exclude='*.pyc' \
     --exclude='*.pyo' \
+    --exclude='mpl_toolkits/basemap/data/*' \
     $list | gzip -9 - > $OUTPUT
 )
