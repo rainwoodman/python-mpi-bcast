@@ -41,10 +41,12 @@ if [[ -n $_PYTHONMPIBCASTBCASTROOT ]]; then
         local USERBASE=
      
         if [ -n $_PYTHONMPI_OLD_PYTHONUSERBASE ]; then
-            USERBASE=`mktemp --tmpdir XXXXXXX.tar.gz`
-            bundle-anaconda $USERBASE $_PYTHONMPI_OLD_PYTHONUSERBASE
-            bcast $USERBASE
-            rm $USERBASE
+            if [ -d $_PYTHONMPI_OLD_PYTHONUSERBASE ]; then
+                USERBASE=`mktemp --tmpdir XXXXXXX.tar.gz`
+                bundle-anaconda $USERBASE $_PYTHONMPI_OLD_PYTHONUSERBASE
+                bcast $USERBASE
+                rm $USERBASE
+            fi
         fi
     }
 
