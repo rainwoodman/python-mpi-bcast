@@ -20,5 +20,18 @@ tar -cf - \
     --exclude='*.pyc' \
     --exclude='*.pyo' \
     --exclude='mpl_toolkits/basemap/data/*' \
+    --exclude='pandas/io/tests/data/*' \
+    --exclude='*.npy' \
+    --exclude='*.csv' \
+    --exclude='*.dta' \
+    --exclude='*.dat' \
+    --exclude='*.xls' \
+    --exclude='*.npz' \
+    --exclude='*.mat' \
+    --exclude='*.arff' \
+    --exclude='*.h5' \
+    --exclude='*.ipynb' \
+    --exclude='*.svg' \
     $list | gzip -9 - > $OUTPUT
 )
+exit 0

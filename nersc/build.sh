@@ -24,7 +24,12 @@ function rotate {
 }
 
 function build {
+    if module swap python python/$1 2>&1 | grep ERROR ; then 
+        return 1
+    fi
+    # the first call won't set the env because it is in a child process.
     module swap python python/$1
+
     local python=`which python`
     local anaconda=`dirname $python`/..
     anaconda=`readlink -f $anaconda`
@@ -36,6 +41,7 @@ function build {
     ( bundle-anaconda _python.tar.gz $anaconda
       rotate python.tar.gz _python.tar.gz
     ) &
+
     ( MPICC=cc bundle-pip _mpi4py.tar.gz mpi4py
     rotate mpi4py.tar.gz _mpi4py.tar.gz
     ) &
@@ -55,13 +61,19 @@ function system {
     mkdir -p lib
 
     local filelist
+    local EXEC
+    if which python-mpi; then
+        EXEC=python-mpi
+    else
+        EXEC='python -m mpi4py'
+    fi
+    filelist=`srun -n 1 strace $EXEC -c 'from mpi4py import MPI' 2>&1 \
+    | grep "= 3$" | grep "\\.so" | sed -s 's;open(";;' | sed -s 's;".*;;' \
+    | sort | uniq | grep "\\.so" |grep -v "ld.so.conf"`
 
-    filelist=`srun -n 1 strace python-mpi -c 'from mpi4py import MPI' 2>&1 \
-    | grep "= 3$" | grep .so | sed -s 's;open(";;' | sed -s 's;".*;;' \
-    | sort | uniq | grep -v "ld.so.conf"`
-
-    srun -n 1 cp -a $filelist lib/
-
+    srun -n 1 cp -aL $filelist lib/
+    srun -n 1 cp -aL /lib64/* lib/
+    echo $filelist > filelist
     tar -czf _system-libraries.tar.gz lib/
 
     rotate system-libraries.tar.gz _system-libraries.tar.gz
@@ -79,6 +91,7 @@ echo "Second build the python environments; output is messy"
 
 ( build 2.7-anaconda ) &
 ( build 3.4-anaconda ) &
+( build 3.5-anaconda ) &
 
 wait
 

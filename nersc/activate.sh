@@ -35,6 +35,9 @@ function __init__ {
       *3.4-anaconda* )
         ANACONDA=$NERSCROOT/3.4-anaconda
         ;;
+      *3.5-anaconda* )
+        ANACONDA=$NERSCROOT/3.5-anaconda
+        ;;
       * )
         echo "Run module load python/2.7-anaconda first"
         return 1
