@@ -12,7 +12,7 @@ for dir in bin lib include share; do
         list="$list $dir"
     fi
 done
-tar -cf - \
+tar -czf $OUTPUT \
     --exclude='*.html' \
     --exclude='*.jpg' \
     --exclude='*.jpeg' \
@@ -32,6 +32,6 @@ tar -cf - \
     --exclude='*.h5' \
     --exclude='*.ipynb' \
     --exclude='*.svg' \
-    $list | gzip -9 - > $OUTPUT
+    $list
 )
 exit 0
