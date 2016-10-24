@@ -1,0 +1,93 @@
+import sys; sys.__plen = len(sys.path)
+./pydl-0.5.2-py2.7.egg
+./astropy-1.2.1-py2.7-linux-x86_64.egg
+import sys; new = sys.path[sys.__plen:]; del sys.path[sys.__plen:]; p = getattr(sys, '__egginsert', 0); sys.path[p:p] = new; sys.__egginsert = p + len(new)
+import sys; sys.__plen = len(sys.path)
+./matplotlib-1.4.3-py2.7-linux-x86_64.egg
+./mock-2.0.0-py2.7.egg
+./pytz-2016.6.1-py2.7.egg
+./pbr-1.10.0-py2.7.egg
+./funcsigs-1.0.2-py2.7.egg
+./python_dateutil-2.4.2-py2.7.egg
+./six-1.10.0-py2.7.egg
+import sys; new = sys.path[sys.__plen:]; del sys.path[sys.__plen:]; p = getattr(sys, '__egginsert', 0); sys.path[p:p] = new; sys.__egginsert = p + len(new)
+import sys; sys.__plen = len(sys.path)
+./hpsspy-0.2.1-py2.7.egg
+import sys; new = sys.path[sys.__plen:]; del sys.path[sys.__plen:]; p = getattr(sys, '__egginsert', 0); sys.path[p:p] = new; sys.__egginsert = p + len(new)
+import sys; sys.__plen = len(sys.path)
+./quaternionarray-0.6.2.dev0-py2.7.egg
+import sys; new = sys.path[sys.__plen:]; del sys.path[sys.__plen:]; p = getattr(sys, '__egginsert', 0); sys.path[p:p] = new; sys.__egginsert = p + len(new)
+import sys; sys.__plen = len(sys.path)
+./MySQL_python-1.2.3-py2.7-linux-x86_64.egg
+import sys; new = sys.path[sys.__plen:]; del sys.path[sys.__plen:]; p = getattr(sys, '__egginsert', 0); sys.path[p:p] = new; sys.__egginsert = p + len(new)
+import sys; sys.__plen = len(sys.path)
+./PyInstaller-3.2-py2.7.egg
+./setuptools-20.0-py2.7.egg
+import sys; new = sys.path[sys.__plen:]; del sys.path[sys.__plen:]; p = getattr(sys, '__egginsert', 0); sys.path[p:p] = new; sys.__egginsert = p + len(new)
+import sys; sys.__plen = len(sys.path)
+./photutils-0.1-py2.7-linux-x86_64.egg
+./astropy-1.2.1-py2.7-linux-x86_64.egg
+import sys; new = sys.path[sys.__plen:]; del sys.path[sys.__plen:]; p = getattr(sys, '__egginsert', 0); sys.path[p:p] = new; sys.__egginsert = p + len(new)
+import sys; sys.__plen = len(sys.path)
+./rpy2-2.7.6-py2.7-linux-x86_64.egg
+./singledispatch-3.4.0.3-py2.7.egg
+./six-1.10.0-py2.7.egg
+import sys; new = sys.path[sys.__plen:]; del sys.path[sys.__plen:]; p = getattr(sys, '__egginsert', 0); sys.path[p:p] = new; sys.__egginsert = p + len(new)
+import sys; sys.__plen = len(sys.path)
+./pytz-2015.2-py2.7.egg
+import sys; new = sys.path[sys.__plen:]; del sys.path[sys.__plen:]; p = getattr(sys, '__egginsert', 0); sys.path[p:p] = new; sys.__egginsert = p + len(new)
+import sys; sys.__plen = len(sys.path)
+./requests-2.8.1-py2.7.egg
+import sys; new = sys.path[sys.__plen:]; del sys.path[sys.__plen:]; p = getattr(sys, '__egginsert', 0); sys.path[p:p] = new; sys.__egginsert = p + len(new)
+import sys; sys.__plen = len(sys.path)
+./astropy_helpers-1.1.1-py2.7.egg
+import sys; new = sys.path[sys.__plen:]; del sys.path[sys.__plen:]; p = getattr(sys, '__egginsert', 0); sys.path[p:p] = new; sys.__egginsert = p + len(new)
+import sys; sys.__plen = len(sys.path)
+./setuptools-20.0-py2.7.egg
+import sys; new = sys.path[sys.__plen:]; del sys.path[sys.__plen:]; p = getattr(sys, '__egginsert', 0); sys.path[p:p] = new; sys.__egginsert = p + len(new)
+import sys; sys.__plen = len(sys.path)
+./astropy-1.2.1-py2.7-linux-x86_64.egg
+import sys; new = sys.path[sys.__plen:]; del sys.path[sys.__plen:]; p = getattr(sys, '__egginsert', 0); sys.path[p:p] = new; sys.__egginsert = p + len(new)
+import sys; sys.__plen = len(sys.path)
+./python_dateutil-2.4.2-py2.7.egg
+./six-1.10.0-py2.7.egg
+import sys; new = sys.path[sys.__plen:]; del sys.path[sys.__plen:]; p = getattr(sys, '__egginsert', 0); sys.path[p:p] = new; sys.__egginsert = p + len(new)
+import sys; sys.__plen = len(sys.path)
+./six-1.10.0-py2.7.egg
+import sys; new = sys.path[sys.__plen:]; del sys.path[sys.__plen:]; p = getattr(sys, '__egginsert', 0); sys.path[p:p] = new; sys.__egginsert = p + len(new)
+import sys; sys.__plen = len(sys.path)
+./healpy-1.9.0-py2.7-linux-x86_64.egg
+./astropy-1.2.1-py2.7-linux-x86_64.egg
+./six-1.10.0-py2.7.egg
+./matplotlib-1.4.3-py2.7-linux-x86_64.egg
+./mock-2.0.0-py2.7.egg
+./pytz-2016.6.1-py2.7.egg
+./python_dateutil-2.4.2-py2.7.egg
+./pbr-1.10.0-py2.7.egg
+./funcsigs-1.0.2-py2.7.egg
+import sys; new = sys.path[sys.__plen:]; del sys.path[sys.__plen:]; p = getattr(sys, '__egginsert', 0); sys.path[p:p] = new; sys.__egginsert = p + len(new)
+import sys; sys.__plen = len(sys.path)
+./paramiko-1.15.2-py2.7.egg
+./ecdsa-0.13-py2.7.egg
+import sys; new = sys.path[sys.__plen:]; del sys.path[sys.__plen:]; p = getattr(sys, '__egginsert', 0); sys.path[p:p] = new; sys.__egginsert = p + len(new)
+import sys; sys.__plen = len(sys.path)
+./lmfit-0.8.3-py2.7.egg
+import sys; new = sys.path[sys.__plen:]; del sys.path[sys.__plen:]; p = getattr(sys, '__egginsert', 0); sys.path[p:p] = new; sys.__egginsert = p + len(new)
+import sys; sys.__plen = len(sys.path)
+./sncosmo-1.0.0-py2.7-linux-x86_64.egg
+./astropy-1.2.1-py2.7-linux-x86_64.egg
+import sys; new = sys.path[sys.__plen:]; del sys.path[sys.__plen:]; p = getattr(sys, '__egginsert', 0); sys.path[p:p] = new; sys.__egginsert = p + len(new)
+import sys; sys.__plen = len(sys.path)
+./pymongo-3.0.2-py2.7-linux-x86_64.egg
+import sys; new = sys.path[sys.__plen:]; del sys.path[sys.__plen:]; p = getattr(sys, '__egginsert', 0); sys.path[p:p] = new; sys.__egginsert = p + len(new)
+import sys; sys.__plen = len(sys.path)
+./pkgconfig-1.1.0-py2.7.egg
+import sys; new = sys.path[sys.__plen:]; del sys.path[sys.__plen:]; p = getattr(sys, '__egginsert', 0); sys.path[p:p] = new; sys.__egginsert = p + len(new)
+import sys; sys.__plen = len(sys.path)
+./h5py-2.6.0-py2.7-linux-x86_64.egg
+./six-1.10.0-py2.7.egg
+import sys; new = sys.path[sys.__plen:]; del sys.path[sys.__plen:]; p = getattr(sys, '__egginsert', 0); sys.path[p:p] = new; sys.__egginsert = p + len(new)
+import sys; sys.__plen = len(sys.path)
+./speclite-0.4-py2.7.egg
+./astropy-1.2.1-py2.7-linux-x86_64.egg
+import sys; new = sys.path[sys.__plen:]; del sys.path[sys.__plen:]; p = getattr(sys, '__egginsert', 0); sys.path[p:p] = new; sys.__egginsert = p + len(new)
