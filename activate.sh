@@ -50,6 +50,13 @@ if [[ -n $_PYTHONMPIBCASTBCASTROOT ]]; then
         fi
     }
 
+    function bcast-pip {
+        local FILE=`mktemp --tmpdir XXXXXXX.tar.gz`
+        $_PYTHONMPIBCASTDIRNAME/tar-pip.sh $FILE $*
+        bcast $FILE
+        rm $FILE
+    }
+
     function mirror {
         # BASH gimmicks: local always return 0
         # http://unix.stackexchange.com/a/146900
