@@ -12,7 +12,7 @@ for dir in bin lib include share; do
         list="$list $dir"
     fi
 done
-tar -czf $OUTPUT \
+tar -h --hard-dereference -czf $OUTPUT \
     --exclude='*.html' \
     --exclude='*.jpg' \
     --exclude='*.jpeg' \
