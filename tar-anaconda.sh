@@ -32,6 +32,9 @@ tar -h --hard-dereference -czf $OUTPUT \
     --exclude='*.h5' \
     --exclude='*.ipynb' \
     --exclude='*.svg' \
+    --exclude='libreadline.so.6' \
+    --exclude='libreadline.so' \
     $list
 )
+# black-list readline due to https://github.com/ContinuumIO/anaconda-issues/issues/1701
 exit 0
