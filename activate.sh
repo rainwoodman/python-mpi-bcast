@@ -30,6 +30,7 @@ if [[ -n $_PYTHONMPIBCASTBCASTROOT ]]; then
     export PYTHONPATH=$_PYTHONMPIBCASTBCASTROOT/lib/python
     export PYTHONHOME=$_PYTHONMPIBCASTBCASTROOT
     export PYTHONUSERBASE=$_PYTHONMPIBCASTBCASTROOT
+    export PYTHONHASHSEED=0 # important to make the non-cyclic object/dict deconstruction collective
     export LD_LIBRARY_PATH=$_PYTHONMPIBCASTBCASTROOT/lib:$LD_LIBRARY_PATH
     export PATH=$_PYTHONMPIBCASTBCASTROOT/bin:$PATH
 
