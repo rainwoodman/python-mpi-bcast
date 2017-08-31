@@ -24,7 +24,6 @@ tar -h --hard-dereference -czf $OUTPUT \
     --exclude='*.npy' \
     --exclude='*.csv' \
     --exclude='*.dta' \
-    --exclude='*.dat' \
     --exclude='*.xls' \
     --exclude='*.npz' \
     --exclude='*.mat' \
