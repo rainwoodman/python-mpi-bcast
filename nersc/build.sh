@@ -89,11 +89,11 @@ echo "First build the system-libraries bundle"
 
 echo "Second build the python environments; output is messy"
 
-( build 2.7-anaconda ) &
-( build 3.4-anaconda ) &
-( build 3.5-anaconda ) &
+#( build 2.7-anaconda ) &
+#( build 3.4-anaconda ) &
+#( build 3.5-anaconda ) &
 
-wait
+#wait
 
 echo "-------------------------------------------------"
 
