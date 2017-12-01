@@ -58,6 +58,14 @@ if [[ -n $_PYTHONMPIBCASTBCASTROOT ]]; then
         rm $FILE
     }
 
+    function bcast-dir-pip {
+        # workaround https://github.com/pypa/pip/issues/2195
+        local DIR=`mktemp -d --tmpdir XXXXXXX`
+        (cd $1; python setup.py sdist -d $DIR)
+        bcast-pip $DIR/*.tar.gz
+        rm -rf $DIR
+    }
+
     function mirror {
         # BASH gimmicks: local always return 0
         # http://unix.stackexchange.com/a/146900
