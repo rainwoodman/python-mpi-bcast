@@ -33,5 +33,6 @@ function tree {
 echo "Done. Tree of files... "
 (
 cd /usr/common/contrib/bccp/python-mpi-bcast/;
+chmod -R o+rX *
 tree .
 )
