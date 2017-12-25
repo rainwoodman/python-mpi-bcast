@@ -25,7 +25,7 @@ libarchive-3.1.2/configure: libarchive-3.1.2.tar.gz
 
 depends/lib/libarchive.a: libarchive-3.1.2/configure
 	(cd libarchive-3.1.2; \
-        ./configure --prefix=/ \
+        ./configure --prefix=/ "CC=$(CC)" \
         --without-iconv \
         --without-xml2 \
         --without-nettle \
@@ -33,7 +33,7 @@ depends/lib/libarchive.a: libarchive-3.1.2/configure
         --without-lzma \
         --without-expat \
         --disable-shared --enable-static \
-        --enable-bsdtar=static --enable-bsdcpio=static; \
+        --disable-bsdtar --disable-bsdcpio; \
     make install DESTDIR=$(PWD)/depends)
 
 
