@@ -7,11 +7,11 @@ nodes, bcast, tar, chmod, bcasttot, launch = numpy.loadtxt('./collect.txt', unpa
 f = Figure(figsize=(4, 4))
 ax = f.add_subplot(111)
 
-ax.plot(nodes * 24, launch, 's ', color='k', label='import scipy')
-ax.plot(nodes * 24, bcasttot, 'o ', color='k', label='bcast')
-ax.plot(nodes * 24, bcast, 'x ', color='k', mew=2, label='bcast/MPI_Bcast')
-ax.plot(nodes * 24, tar,   '+ ', color='k', mew=2, label='bcast/tar xzvf')
-ax.plot(nodes * 24, launch + bcasttot, 'd ', color='k', label='total')
+ax.plot(nodes * 32, launch, 's ', color='r', mec='none', label='import scipy')
+ax.plot(nodes * 32, bcasttot, ls='none', marker=(8, 2, 0), color='m', label='bcast')
+ax.plot(nodes * 32, bcast, 'x ', color='g', mew=1, label='bcast/MPI_Bcast')
+ax.plot(nodes * 32, tar,   '+ ', color='b', mew=1, label='bcast/tar xzvf')
+ax.plot(nodes * 32, launch + bcasttot, 'D ', color='k', label='total')
 
 ax.set_xlabel('Number of Ranks')
 ax.set_ylabel('Wall time [sec]')
