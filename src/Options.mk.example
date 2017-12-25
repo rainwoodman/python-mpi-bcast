@@ -10,7 +10,7 @@
 # on Edison (gcc)
 # MPICC='cc -static'
 
-MPICC=mpicc
+MPICC=mpicc -static
 
 # install location
 PREFIX=$(PWD)/usr
