@@ -8,8 +8,14 @@ BCASTSRC = bcast.c bcast-tar.c
 
 all: bcast
 
-bcast : bcast.c bcast-tar.c _inst/lib/libarchive.a
-	$(MPICC) -I_inst/include -L_inst/lib -g -O0 -o bcast bcast.c bcast-tar.c -larchive -lz
+Options.mk:
+	@echo "Need Options.mk; produce the file by copying and modifying Options.mk.example."
+	@exit 1
+
+bcast : bcast.c bcast-tar.c depends/lib/libarchive.a
+	$(MPICC) -Idepends/include -Ldepends/lib -g -O0 -o bcast \
+         bcast.c bcast-tar.c \
+         -larchive -lz -lbz2
 
 libarchive-3.1.2.tar.gz:
 	curl -o $@ http://www.libarchive.org/downloads/libarchive-3.1.2.tar.gz
@@ -17,11 +23,19 @@ libarchive-3.1.2.tar.gz:
 libarchive-3.1.2/configure: libarchive-3.1.2.tar.gz
 	tar -xzvf libarchive-3.1.2.tar.gz && touch $@
 
-_inst/lib/libarchive.a: libarchive-3.1.2/configure
+depends/lib/libarchive.a: libarchive-3.1.2/configure
 	(cd libarchive-3.1.2; \
-        ./configure --prefix=/ --without-xml2 --without-nettle --without-openssl --without-lzma --without-expat --without-bz2lib \
-        --disable-shared --enable-static; \
-    make install DESTDIR=$(PWD)/_inst)
+        ./configure --prefix=/ \
+        --without-iconv \
+        --without-xml2 \
+        --without-nettle \
+        --without-openssl \
+        --without-lzma \
+        --without-expat \
+        --disable-shared --enable-static \
+        --enable-bsdtar=static --enable-bsdcpio=static; \
+    make install DESTDIR=$(PWD)/depends)
+
 
 install: bcast
 	mkdir -p $(PREFIX)/libexec/python-mpi-bcast
