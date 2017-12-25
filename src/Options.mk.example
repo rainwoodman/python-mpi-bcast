@@ -1,0 +1,19 @@
+# on BlueWaters (cray)
+# make MPICC='cc -static'
+
+# on COMA (CMU)
+# make MPICC=mpiicc LDSHARED="mpiicc -shared"
+
+# on Fedora 19 with openmpi
+# make MPICC=mpicc LDSHARED="mpicc -shared"
+
+# on Edison (gcc)
+# make MPICC='cc -static'
+
+MPICC=mpicc
+PREFIX=/usr
+
+CC=$(MPICC)
+CCDYNAMIC=$(MPICC) -dynamic
+LDSHARED=$(MPICC) -shared
+
