@@ -3,7 +3,7 @@ include Options.mk
 VERSION = 0.1.0
 SCRIPTS = activate.sh tar-anaconda.sh tar-dir.sh tar-pip.sh
 BCASTSRC = bcast.c bcast-tar.c
-
+DOC = README.rst LICENSE.rst Options.mk.example
 .PHONY: build clean sdist install
 
 all: bcast
@@ -43,7 +43,7 @@ install: bcast
 
 sdist:
 	mkdir -p python-mpi-bcast-$(VERSION)
-	cp $(SCRIPTS) $(BCASTSRC) Makefile Options.mk.example python-mpi-bcast-$(VERSION)
+	cp $(SCRIPTS) $(BCASTSRC) $(DOC) Makefile python-mpi-bcast-$(VERSION)
 	tar -czvf python-mpi-bcast-$(VERSION).tar.gz python-mpi-bcast-$(VERSION)
 	rm -rf python-mpi-bcast-$(VERSION)
 
