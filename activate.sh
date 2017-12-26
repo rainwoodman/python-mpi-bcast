@@ -27,12 +27,17 @@ function bundle-anaconda {
 if [[ -n $_PYTHONMPIBCASTBCASTROOT ]]; then
     trap "$_PYTHONMPIBCASTAPRUN rm -rf $_PYTHONMPIBCASTBCASTROOT" EXIT TERM KILL
 
-    export PYTHONPATH=$_PYTHONMPIBCASTBCASTROOT/lib/python
-    export PYTHONHOME=$_PYTHONMPIBCASTBCASTROOT
-    export PYTHONUSERBASE=$_PYTHONMPIBCASTBCASTROOT
-    export PYTHONHASHSEED=0 # important to make the non-cyclic object/dict deconstruction collective
-    #export LD_LIBRARY_PATH=$_PYTHONMPIBCASTBCASTROOT/lib:$LD_LIBRARY_PATH
+    # use the correct Python
+
     export PATH=$_PYTHONMPIBCASTBCASTROOT/bin:$PATH
+    # since we use anaconda's relocated python there is no need
+    # to worry about other PATH variables.
+    # especially LD_LIBRARY_PATH -- anaconda packages shall use the correct rpath anyways.
+
+    # reset PYTHONUSERBASE to avoid looking up home
+    export PYTHONUSERBASE=$_PYTHONMPIBCASTBCASTROOT
+    # important to make the non-cyclic object/dict deconstruction collective
+    export PYTHONHASHSEED=0
 
     function bcast {
         $_PYTHONMPIBCASTAPRUN $_PYTHONMPIBCASTDIRNAME/bcast -p $_PYTHONMPIBCASTBCASTROOT $* || return 1
