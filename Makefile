@@ -1,6 +1,6 @@
 include Options.mk
 
-VERSION = 0.1.0
+VERSION = 0.1.3
 SCRIPTS = activate.sh tar-anaconda.sh tar-dir.sh tar-pip.sh
 BCASTSRC = bcast.c bcast-tar.c
 DOC = README.rst LICENSE.rst Options.mk.example
