@@ -24,7 +24,6 @@ for dir in bin lib include share; do
 done
 
 tar -czf $OUTPUT \
-    --exclude='*.html' \
     --exclude='*.jpg' \
     --exclude='*.jpeg' \
     --exclude='*.png' \
