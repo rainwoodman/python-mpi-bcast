@@ -22,6 +22,7 @@ install:
     - source activate test
     - conda install --yes numpy=$NUMPY_VERSION nose mpi4py
     - bash tar-anaconda.sh anaconda.tar.gz $HOME/miniconda/envs/test
+    - cp Options.mk.example Options.mk
     - make bcast
 
 script:
