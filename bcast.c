@@ -68,7 +68,7 @@ static void bcast(char * src, char * PREFIX) {
     char * dest = alloca(strlen(PREFIX) + 100);
     char * filename = basename(src);
 
-    sprintf(dest, "%s/%s",  PREFIX, filename, ThisTask);
+    sprintf(dest, "%s/%s-%d",  PREFIX, filename, ThisTask);
 
     free(filename);
 
