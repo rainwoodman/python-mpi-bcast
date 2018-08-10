@@ -6,11 +6,14 @@
 
 # on Fedora 19 with openmpi
 # MPICC=mpicc LDSHARED="mpicc -shared"
+#
+# on Ubuntu with openmpi
+# MPICC=mpicc LDSHARED="mpicc -shared"
 
 # on Edison (gcc)
 # MPICC='cc -static'
 
-MPICC=mpicc -static
+MPICC=mpicc
 
 # install location
 PREFIX=$(PWD)/usr
