@@ -6,16 +6,16 @@ addons:
             - libopenmpi-dev
             - openmpi-bin
 
-python:
-    - 2.7
-    - 3.6
+env :
+    - TRAVIS_PYTHON_VERSION=2.7
+    - TRAVIS_PYTHON_VERSION=3.6
 
 before_install:
     - which gcc
     - which mpicc
 install:
     - cp Options.mk.example Options.mk
-    - make bcast || cat libarchive-*/config.log
+    - make bcast
 
 script:
     - wget http://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh -O miniconda.sh
