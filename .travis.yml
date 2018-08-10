@@ -12,7 +12,8 @@ python:
     - 3.6
 
 before_install:
-
+    - which gcc
+    - which mpicc
 install:
     - cp Options.mk.example Options.mk
     - make bcast
