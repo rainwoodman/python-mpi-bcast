@@ -13,7 +13,6 @@ for dir in bin lib include share; do
     fi
 done
 tar -h --hard-dereference -czf $OUTPUT \
-    --exclude='*.html' \
     --exclude='*.jpg' \
     --exclude='*.jpeg' \
     --exclude='*.png' \
