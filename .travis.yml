@@ -16,7 +16,7 @@ before_install:
     - ./miniconda.sh -b -p $HOME/miniconda
     - export PATH=$HOME/miniconda/bin:$PATH
     - conda update --yes conda
-    - conda create --yes -n test python=$TRAVIS_PYTHON_VERSION gcc_linux-64
+    - conda create --yes -n test python=$TRAVIS_PYTHON_VERSION gcc_linux-64 bzip2
     - conda install --yes numpy  nose
     - conda install --yes mpi4py
 
