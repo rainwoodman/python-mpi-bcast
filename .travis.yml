@@ -22,6 +22,7 @@ before_install:
 
 install:
     - source activate test
+    - export CONDA_BUILD=1
     - which gcc
     - which mpicc
     - cp Options.mk.example Options.mk
