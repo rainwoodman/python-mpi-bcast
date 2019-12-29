@@ -21,8 +21,8 @@ before_install:
     - conda install --yes mpi4py
 
 install:
-    - source activate test
     - export CONDA_BUILD=1
+    - source activate test
     - which gcc
     - which mpicc
     - cp Options.mk.example Options.mk
