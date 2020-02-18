@@ -22,7 +22,7 @@ before_install:
     - export CONDA_BUILD=1
     - source activate test
     - conda install --yes numpy  nose
-    - conda install --yes mpi4py
+    - conda install --yes mpi4py mpich
 
 install:
     - which gcc
