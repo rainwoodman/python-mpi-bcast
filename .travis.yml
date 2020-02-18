@@ -19,12 +19,12 @@ before_install:
     - export PATH=$HOME/miniconda/bin:$PATH
     - conda update --yes conda
     - conda create --yes -n test python=$TRAVIS_PYTHON_VERSION gcc_linux-64 bzip2
+    - export CONDA_BUILD=1
+    - source activate test
     - conda install --yes numpy  nose
     - conda install --yes mpi4py
 
 install:
-    - export CONDA_BUILD=1
-    - source activate test
     - which gcc
     - which mpicc
     - cp Options.mk.example Options.mk
