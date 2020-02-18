@@ -28,7 +28,6 @@ install:
     - cp Options.mk.example Options.mk
     - make bcast
     - mpirun -n 2 python -c 'from mpi4py import MPI; print(MPI);'
-    - source deactivate
     - bash tar-anaconda.sh anaconda.tar.gz $HOME/miniconda/envs/test
 
 script:
