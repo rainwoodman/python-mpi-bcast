@@ -1,10 +1,12 @@
 language: c
 
-addons:
-    apt:
-        packages:
-            - libopenmpi-dev
-            - openmpi-bin
+# Disabled openmpi because it conflicts with anaconda's mpich.
+# 
+#addons:
+#    apt:
+#        packages:
+#            - libopenmpi-dev
+#            - openmpi-bin
 
 env :
     - TRAVIS_PYTHON_VERSION=2.7
