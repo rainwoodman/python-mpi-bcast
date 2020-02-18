@@ -1,32 +1,36 @@
 language: c
 
-addons:
-    apt:
-        packages:
-            - libopenmpi-dev
-            - openmpi-bin
+# Disabled openmpi because it conflicts with anaconda's mpich.
+# 
+#addons:
+#    apt:
+#        packages:
+#            - libopenmpi-dev
+#            - openmpi-bin
 
 env :
     - TRAVIS_PYTHON_VERSION=2.7
     - TRAVIS_PYTHON_VERSION=3.6
 
 before_install:
-    - which gcc
-    - which mpicc
-install:
-    - cp Options.mk.example Options.mk
-    - make bcast
-
-script:
     - wget http://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh -O miniconda.sh
     - chmod +x miniconda.sh
     - ./miniconda.sh -b -p $HOME/miniconda
     - export PATH=$HOME/miniconda/bin:$PATH
     - conda update --yes conda
-    - conda create --yes -n test python=$TRAVIS_PYTHON_VERSION
+    - conda create --yes -n test python=$TRAVIS_PYTHON_VERSION gcc_linux-64 bzip2
+    - export CONDA_BUILD=1
     - source activate test
     - conda install --yes numpy  nose
-    - conda install --yes mpich2 mpi4py
-    - source deactivate
+    - conda install --yes mpi4py mpich
+
+install:
+    - which gcc
+    - which mpicc
+    - cp Options.mk.example Options.mk
+    - make bcast
+    - mpirun -n 2 python -c 'from mpi4py import MPI; print(MPI);'
     - bash tar-anaconda.sh anaconda.tar.gz $HOME/miniconda/envs/test
+
+script:
     - bash runtest.sh

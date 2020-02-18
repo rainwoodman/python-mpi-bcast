@@ -7,6 +7,7 @@ bash tar-pip.sh six.tar.gz six
 # send the anaconda packages
 bcast -v anaconda.tar.gz  six.tar.gz
 
+which bcast
+which mpirun
 # location of MPI4PY in /dev/shm/local
-
 time mpirun -n 2 python -c 'from mpi4py import MPI; print(MPI);'
