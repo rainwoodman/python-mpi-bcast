@@ -12,7 +12,7 @@ DIR=`mktemp -d`
 
 trap "rm -rf $DIR" EXIT
 
-pip install --ignore-installed --no-deps --install-option="--prefix=$DIR" $packages || exit 1
+pip install --ignore-installed --no-deps --prefix=$DIR $packages || exit 1
 
 (
 cd $DIR

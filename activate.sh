@@ -45,7 +45,7 @@ if [[ -n $_PYTHONMPIBCASTBCASTROOT ]]; then
 
     function bcast-userbase {
         local USERBASE=
-     
+
         if [ -n $_PYTHONMPI_OLD_PYTHONUSERBASE ]; then
             if [ -d $_PYTHONMPI_OLD_PYTHONUSERBASE ]; then
                 USERBASE=`mktemp --tmpdir XXXXXXX.tar.gz`
