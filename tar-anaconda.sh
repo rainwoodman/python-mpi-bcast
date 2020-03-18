@@ -7,7 +7,7 @@ OUTPUT=`readlink -f $1`
 (
 cd $2
 list=
-for dir in bin lib include share; do
+for dir in bin lib libexec sbin include share etc; do
     if [ -d $dir ]; then
         list="$list $dir"
     fi
